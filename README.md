@@ -68,7 +68,7 @@ let client = craftai({
 
 ### 3 - Create an agent ###
 
-**craft ai** is based around the concept of **agents**. In most use cases, one agent is created per user or per device.
+**craft ai** is based on the concept of **agents**. In most use cases, one agent is created per user or per device.
 
 An agent is an independent module that stores the history of the **context** of its user or device's context, and learns which **decision** to take based on the evolution of this context in the form of a **decision tree**.
 
@@ -76,7 +76,7 @@ In this example, we will create an agent that learns the **decision model** of a
 
 - `peopleCount` which is a `continuous` property,
 - `timeOfDay` which is a `time_of_day` property,
-- `tz`, a property of type `timezone` needed to generate proper values for `timeOfDay` (cf. the [context properties type section](#context-properties-types) for further information),
+- `timezone`, a property of type `timezone` needed to generate proper values for `timeOfDay` (cf. the [context properties type section](#context-properties-types) for further information),
 - and finally `lightbulbState` which is an `enum` property that is also the output of this model.
 
 ```js
@@ -91,7 +91,7 @@ client.createAgent(
       timeOfDay: {
         type: 'time_of_day'
       },
-      tz: {
+      timezone: {
         type: 'timezone'
       },
       lightbulbState: {
@@ -134,7 +134,7 @@ _For further information, check the ['create agent' reference documentation](#cr
 
 ### 4 - Add context operations ###
 
-We have now created our first agent but it is not able to do much yet, to learn a decision model it needs to be provided with data, in **craft ai** these are called context operations.
+We have now created our first agent but it is not able to do much, yet. To learn a decision model it needs to be provided with data, in **craft ai** these are called context operations.
 
 In the following we add 8 operations:
 
@@ -142,10 +142,10 @@ In the following we add 8 operations:
 2. At 7:02, someone enters the room the light is turned on;
 3. At 7:15, someone else enters the room;
 4. At 7:31, the light is turned off;
-5. At 8:12, everyone leave the room;
-6. At 19:23, 2 people enters the room;
+5. At 8:12, everyone leaves the room;
+6. At 19:23, 2 persons enter the room;
 7. At 22:35, the light is turned on;
-8. At 23:06, everyone leave the room and the light is turned off.
+8. At 23:06, everyone leaves the room and the light is turned off.
 
 ```js
 var AGENT_ID = 'my_first_agent';
@@ -163,7 +163,7 @@ client.deleteAgent(AGENT_ID)
       {
         timestamp: 1469410200,
         diff: {
-          tz: '+02:00',
+          timezone: '+02:00',
           peopleCount: 0,
           lightbulbState: 'OFF'
         }
@@ -222,13 +222,13 @@ client.deleteAgent(AGENT_ID)
 });
 ```
 
-In real-world applications, you'll probably do the same kind of thing when the agent is created and then regularly throughout the lifetime of the agent with newer data.
+In real-world applications, you'll probably do the same kind of things when the agent is created and then, regularly throughout the lifetime of the agent with newer data.
 
 _For further information, check the ['add context operations' reference documentation](#add-operations)._
 
 ### 5 - Compute the decision tree ###
 
-The agent has acquire a context history, we can now compute a decision tree from it!
+The agent has acquired a context history, we can now compute a decision tree from it!
 
 The decision tree is computed at a given timestamp, which means it will consider the context history from the creation of this agent up to this moment. Let's first try to compute the decision tree at midnight on July the 26th of 2016.
 
@@ -262,7 +262,7 @@ _For further information, check the ['compute decision tree' reference documenta
 
 ### 6 - Take a decision ###
 
-Once the decision tree is computed it can be used to take a decision. In our case it is basically answering this type of question: "What is the anticipated **state of the lightbulb** at 7:15 if there is 2 persons in the room ?".
+Once the decision tree is computed it can be used to take a decision. In our case it is basically answering this type of question: "What is the anticipated **state of the lightbulb** at 7:15 if there are 2 persons in the room ?".
 
 ```js
 var AGENT_ID = 'my_first_agent';
@@ -283,7 +283,7 @@ client.deleteAgent(AGENT_ID)
 .then(function(tree) {
   console.log('Decision tree retrieved!', tree);
   let res = craftai.decide(tree, {
-    tz: '+02:00',
+    timezone: '+02:00',
     timeOfDay: 7.25,
     peopleCount: 2
   });
@@ -295,6 +295,12 @@ client.deleteAgent(AGENT_ID)
 ```
 
 _For further information, check the ['take decision' reference documentation](#take-decision)._
+
+### Node.JS starter kit ###
+
+If you prefer to get started from an existing code base, the official Node.JS starter kit can get you there! Retrieve the sources locally and follow the "readme" to get a fully working **SmartHome** app using _real-world_ data.
+
+> [:package: _Get the **craft ai** Node.JS Starter Kit_](https://github.com/craft-ai/craft-ai-starterkit-nodejs)
 
 ## API ##
 
@@ -357,13 +363,15 @@ of the day** (the `time` property) and the **day of the week** (the `day`
 property).
 
 `day` and `time` values will be generated automatically, hence the need for
-`tz`, the current Time Zone, to compute their value from given
+`timezone`, the current Time Zone, to compute their value from given
 [`timestamps`](#timestamp).
 
 The `time_quantum` is set to 100 seconds, which means that if the lightbulb
 color is changed from red to blue then from blue to purple in less that 1
 minutes and 40 seconds, only the change from red to purple will be taken into
 account.
+
+> :warning: if no time_quantum is specified, default value is 600.
 
 ```json
 {
@@ -377,7 +385,7 @@ account.
       "day": {
         "type": "day_of_week"
       },
-      "tz": {
+      "timezone": {
         "type": "timezone"
       },
       "lightbulbColor": {
@@ -472,22 +480,23 @@ Create a new agent, and create its [model](#model).
 client.createAgent(
   { // The model
     context: {
-      presence: {
-        type: 'enum'
-      },
-      lightIntensity: {
+      peopleCount: {
         type: 'continuous'
       },
-      lightbulbColor: {
+      timeOfDay: {
+        type: 'time_of_day'
+      },
+      timezone: {
+        type: 'timezone'
+      },
+      lightbulbState: {
         type: 'enum'
       }
     },
-    output: [
-      lightbulbColor
-    ],
+    output: [ 'lightbulbState' ],
     time_quantum: 100
   },
-  'aphasic_parrot', // id for the agent, if undefined a random id is generated
+  'impervious_kraken', // id for the agent, if undefined a random id is generated
   true, // `deleteOnExit`, default is false
 )
 .then(function(agent) {
@@ -519,7 +528,7 @@ event.
 
 ```js
 client.deleteAgent(
-  'aphasic_parrot' // The agent id
+  'impervious_kraken' // The agent id
 )
 .then(function() {
   // The agent was successfully deleted
@@ -533,7 +542,7 @@ client.deleteAgent(
 
 ```js
 client.getAgent(
-  'aphasic_parrot' // The agent id
+  'impervious_kraken' // The agent id
 )
 .then(function(agent) {
   // Agent details
@@ -548,7 +557,7 @@ client.getAgent(
 ```js
 client.listAgents()
 .then(function(agentIds) {
-  // list of agent ids, eg. ['impervious_kraken', 'aphasic_parrot']
+  // list of agent ids, eg. ['impervious_kraken', 'impervious_kraken']
 })
 .catch(function(error) {
   // Catch errors here
@@ -559,7 +568,7 @@ client.listAgents()
 
 ```js
 client.getAgentInspectorUrl(
-  'aphasic_parrot', // The agent id.
+  'impervious_kraken', // The agent id.
   1464600256 // optional, the timestamp for which you want to inspect the tree.
 )
 .then(function(url) {
@@ -579,23 +588,59 @@ least once every `cfg.operationsAdditionWait`.
 
 ```js
 client.addAgentContextOperations(
-  'aphasic_parrot', // The agent id
+  'impervious_kraken', // The agent id
   [ // The list of operations
     {
-      timestamp: 1464600000, // Operation timestamp
+      timestamp: 1469410200, // Operation timestamp
       diff: {
-        presence: 'robert',
-        lightIntensity: 0.4,
-        lightbulbColor: 'green'
+        timezone: '+02:00',
+        peopleCount: 0,
+        lightbulbState: 'OFF'
       }
     },
     {
-      timestamp: 1464600500,
+      timestamp: 1469415720,
       diff: {
-        presence: 'gisele',
-        lightbulbColor: 'purple'
+        peopleCount: 1,
+        lightbulbState: 'ON'
       }
     },
+    {
+      timestamp: 1469416500,
+      diff: {
+        peopleCount: 2
+      }
+    },
+    {
+      timestamp: 1469417460,
+      diff: {
+        lightbulbState: 'OFF'
+      }
+    },
+    {
+      timestamp: 1469419920,
+      diff: {
+        peopleCount: 0
+      }
+    },
+    {
+      timestamp: 1469460180,
+      diff: {
+        peopleCount: 2
+      }
+    },
+    {
+      timestamp: 1469471700,
+      diff: {
+        lightbulbState: 'ON'
+      }
+    },
+    {
+      timestamp: 1469473560,
+      diff: {
+        peopleCount: 0
+      }
+    }
   ],
   false // Flush immediately the given operations, default is false
 )
@@ -616,10 +661,10 @@ force a flush before proceeding. For example:
 
 ```js
 // Adding a first bunch of context operations
-client.addAgentContextOperations('aphasic_parrot', [ /* ... */ ])
+client.addAgentContextOperations('impervious_kraken', [ /* ... */ ])
 .then(function() {
   // Adding a second bunch of context operations
-  client.addAgentContextOperations('aphasic_parrot', [ /* ... */ ])
+  client.addAgentContextOperations('impervious_kraken', [ /* ... */ ])
 })
 .catch(function(error) {
   // You won't catch anything there
@@ -627,7 +672,7 @@ client.addAgentContextOperations('aphasic_parrot', [ /* ... */ ])
 .then(function() {
   // The operations where successfully added to the cache, we don't know **yet**
   // if the additions actually failed or not
-  return client.getAgentContext('aphasic_parrot', 1464600256);
+  return client.getAgentContext('impervious_kraken', 1469473600);
 })
 .then(function(context) {
   // Work on context
@@ -642,7 +687,7 @@ client.addAgentContextOperations('aphasic_parrot', [ /* ... */ ])
 
 ```js
 client.getAgentContextOperations(
-  'aphasic_parrot' // The agent id
+  'impervious_kraken' // The agent id
 )
 .then(function(operations) {
   // Work on operations
@@ -656,8 +701,8 @@ client.getAgentContextOperations(
 
 ```js
 client.getAgentContext(
-  'aphasic_parrot', // The agent id
-  1464600256 // The timestamp at which the context state is retrieved
+  'impervious_kraken', // The agent id
+  1469473600 // The timestamp at which the context state is retrieved
 )
 .then(function(context) {
   // Work on context
@@ -669,15 +714,113 @@ client.getAgentContext(
 
 ### Decision tree ###
 
+Decision trees are computed at specific timestamps, directly by **craft ai** which learns from the context operations [added](#add-operations) throughout time.
+
+When you [compute](#compute) a decision tree, **craft ai** should always return you an array containing the **tree version** as the first element. This **tree version** determines what other information is included in the response body.
+
+In version `"0.0.3"`, the other included elements are (in order):
+
+- the agent's model as specified during the agent's [creation](#create-agent)
+- the tree itself as a JSON object:
+
+  * Internal nodes are represented by a `"predicate_property"` and a `"children"` array. The latter contains the actual two children of the current node and the criterion (`"predicate"`) on the `"predicate_property"`'s value, to decide which child to walk down towards.
+  * Leaves have an output `"value"` and a `"confidence"` for this value, instead of a `"predicate_property"` and a `"children"` array.
+  * The root has one more key than regular nodes: the `"output_property"` which defines what is the actual meaning of the leaves' value.
+
 #### Compute ####
 
 ```js
 client.getAgentDecisionTree(
-  'aphasic_parrot', // The agent id
-  1464600256 // The timestamp at which the decision tree is retrieved
+  'impervious_kraken', // The agent id
+  1469473600 // The timestamp at which the decision tree is retrieved
 )
 .then(function(tree) {
   // Works with the given tree
+  console.log(tree);
+  /* Outputed tree is the following
+  [
+    {
+      "version": "0.0.3"
+    },
+    {
+      "context": {
+        "peopleCount": {
+          "type": "continuous"
+        },
+        "timeOfDay": {
+          "type": "time_of_day",
+          "is_generated": true
+        },
+        "timezone": {
+          "type": "timezone"
+        },
+        "lightbulbState": {
+          "type": "enum"
+        }
+      },
+      "output": [
+        "lightbulbState"
+      ],
+      "time_quantum": 600
+    },
+    {
+      "children": [
+        {
+          "children": [
+            {
+              "children": [
+                {
+                  "confidence": 0.9545537233352661,
+                  "predicate": {
+                    "op": "continuous.lessthan",
+                    "value": 1
+                  },
+                  "value": "OFF"
+                },
+                {
+                  "confidence": 0.8630361557006836,
+                  "predicate": {
+                    "op": "continuous.greaterthanorequal",
+                    "value": 1
+                  },
+                  "value": "ON"
+                }
+              ],
+              "predicate": {
+                "op": "continuous.lessthan",
+                "value": 5.666666507720947
+              },
+              "predicate_property": "peopleCount"
+            },
+            {
+              "confidence": 0.9947378635406494,
+              "predicate": {
+                "op": "continuous.greaterthanorequal",
+                "value": 5.666666507720947
+              },
+              "value": "OFF"
+            }
+          ],
+          "predicate": {
+            "op": "continuous.lessthan",
+            "value": 20.66666603088379
+          },
+          "predicate_property": "timeOfDay"
+        },
+        {
+          "confidence": 0.8630361557006836,
+          "predicate": {
+            "op": "continuous.greaterthanorequal",
+            "value": 20.66666603088379
+          },
+          "value": "ON"
+        }
+      ],
+      "output_property": "lightbulbState",
+      "predicate_property": "timeOfDay"
+    }
+  ]
+  */
 })
 .catch(function(error) {
   // Catch errors here
@@ -690,11 +833,12 @@ The first method retrieves the decision tree then apply it on the given context.
 
 ```js
 client.computeAgentDecision(
-  'aphasic_parrot', // The agent id
+  'impervious_kraken', // The agent id
   1464600256, // The timestamp at which the decision is taken
   { // The context on which the decision is taken
-    presence: 'gisele',
-    lightIntensity: 0.75
+    timezone: '+02:00',
+    timeOfDay: 7.5,
+    peopleCount: 3
   }
 )
 .then(function(decision) {
@@ -710,31 +854,38 @@ To get a chance to store and reuse the decision tree, use `getAgentDecisionTree`
 ```js
 // `tree` is the decision tree as retrieved through the craft ai REST API
 let tree = { ... };
-
-// Compute the decision on a context created from the given one and filling the
+// Compute the decision with specifying every context field
+let decision = craftai.decide(
+  tree,
+  {
+    timezone: '+02:00',
+    timeOfDay: 7.5,
+    peopleCount: 3
+  }
+// Or Compute the decision on a context created from the given one and filling the
 // `day_of_week`, `time_of_day` and `timezone` properties from the given `Time`
 let decision = craftai.decide(
   tree,
   {
-    presence: 'gisele'
+    timezone: '+02:00',
+    peopleCount: 3
   },
-  new Time('2010-01-01T05:06:30'));
+  new craftai.Time('2010-01-01T07:30:30'));
 ```
 
-> Any number of partial contextes and/or `craftai.Time` instances can be provided to `decide`, it follows the same semantics than [Object.assign(...)](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object/assign): the later arguments overriding the properties value from the previous ones)
+> Any number of partial contexts and/or `craftai.Time` instances can be provided to `decide`, it follows the same semantics than [Object.assign(...)](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object/assign): the later arguments overriding the properties value from the previous ones)
 
-The computed `decision` looks like:
+A computed `decision` would look like:
 
 ```js
 {
   context: { // In which context the decision was taken
-    presence: 'gisele',
-    day: 4,
-    time: 5.108333333333333,
-    tz: '+01:00'
+    timezone: '+02:00',
+    timeOfDay: 7.5,
+    peopleCount: 3
   },
   decision: { // The decision itself
-    blind: 'OPEN'
+    lightbulbState: 'ON'
   },
   confidence: 0.9937745256361138, // The confidence in the decision
   predicates: [ // The ordered list of predicates that were validated to reach this decision
@@ -744,19 +895,9 @@ The computed `decision` looks like:
       value: 6
     },
     {
-      property: 'timeOfDay',
-      op: 'continuous.lessthan',
-      value: 19
-    },
-    {
-      property: 'dayOfWeek',
+      property: 'peopleCount',
       op: 'continuous.greaterthanorequal',
-      value: 5
-    },
-    {
-      property: 'timeOfDay',
-      op: 'continuous.greaterthanorequal',
-      value: 10
+      value: 2
     }
   ]
 }
