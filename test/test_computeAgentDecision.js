@@ -1,9 +1,9 @@
 import craftai from '../src';
 
-import MODEL_1 from './data/model_1.json';
-import MODEL_1_OPERATIONS_1 from './data/model_1_operations_1.json';
+import CONFIGURATION_1 from './data/configuration_1.json';
+import CONFIGURATION_1_OPERATIONS_1 from './data/configuration_1_operations_1.json';
 
-const MODEL_1_OPERATIONS_1_TO = _.last(MODEL_1_OPERATIONS_1).timestamp;
+const CONFIGURATION_1_OPERATIONS_1_TO = _.last(CONFIGURATION_1_OPERATIONS_1).timestamp;
 
 describe('client.computeAgentDecision(<agentId>, <timestamp>, <context>)', function() {
   let client;
@@ -15,18 +15,18 @@ describe('client.computeAgentDecision(<agentId>, <timestamp>, <context>)', funct
   });
   beforeEach(function() {
     return client.deleteAgent(agentId) // Delete any preexisting agent with this id.
-      .then(() => client.createAgent(MODEL_1, agentId))
+      .then(() => client.createAgent(CONFIGURATION_1, agentId))
       .then(createdAgent => {
         expect(createdAgent).to.be.ok;
         agent = createdAgent;
-        return client.addAgentContextOperations(agent.id, MODEL_1_OPERATIONS_1);
+        return client.addAgentContextOperations(agent.id, CONFIGURATION_1_OPERATIONS_1);
       });
   });
   afterEach(function() {
     return client.deleteAgent(agentId);
   });
   it('should succeed when using valid parameters', function() {
-    return client.computeAgentDecision(agent.id, MODEL_1_OPERATIONS_1_TO + 200, {
+    return client.computeAgentDecision(agent.id, CONFIGURATION_1_OPERATIONS_1_TO + 200, {
       presence: 'none',
       lightIntensity: 0.1
     })
@@ -36,7 +36,7 @@ describe('client.computeAgentDecision(<agentId>, <timestamp>, <context>)', funct
       });
   });
   it('should succeed when using valid parameters (context override)', function() {
-    return client.computeAgentDecision(agent.id, MODEL_1_OPERATIONS_1_TO + 200, {
+    return client.computeAgentDecision(agent.id, CONFIGURATION_1_OPERATIONS_1_TO + 200, {
       presence: 'none',
       lightIntensity: 1
     }, {

@@ -103,9 +103,9 @@ export default function createClient(cfg) {
   // 'Public' attributes & methods
   let instance = _.defaults(_.clone(cfg), DEFAULTS, {
     cfg: cfg,
-    createAgent: function(model, id = undefined, deleteOnExit = false) {
-      if (_.isUndefined(model) || !_.isObject(model)) {
-        return Promise.reject(new errors.CraftAiBadRequestError('Bad Request, unable to create an agent with no or invalid model provided.'));
+    createAgent: function(configuration, id = undefined, deleteOnExit = false) {
+      if (_.isUndefined(configuration) || !_.isObject(configuration)) {
+        return Promise.reject(new errors.CraftAiBadRequestError('Bad Request, unable to create an agent with no or invalid configuration provided.'));
       }
 
       return request({
@@ -113,11 +113,11 @@ export default function createClient(cfg) {
         path: '/agents',
         body: {
           id: id,
-          model: model
+          configuration: configuration
         }
       }, this)
       .then(agent => {
-        debug(`Agent '${agent.id}' created using model '${agent.model}'`);
+        debug(`Agent '${agent.id}' created using configuration '${agent.configuration}'`);
         if (deleteOnExit) {
           agentsToDeleteOnExit.push(agent.id);
         }

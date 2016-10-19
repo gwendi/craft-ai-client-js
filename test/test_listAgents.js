@@ -1,6 +1,6 @@
 import craftai from '../src';
 
-import MODEL_1 from './data/model_1.json';
+import CONFIGURATION_1 from './data/configuration_1.json';
 
 describe('client.listAgents()', function() {
   let client;
@@ -11,7 +11,7 @@ describe('client.listAgents()', function() {
   });
   beforeEach(function() {
     return Promise.all(_.map(agentsId, agentId => client.deleteAgent(agentId))) // Delete any preexisting agent with this id.
-      .then(() => Promise.all(_.map(agentsId, agentId => client.createAgent(MODEL_1, agentId))));
+      .then(() => Promise.all(_.map(agentsId, agentId => client.createAgent(CONFIGURATION_1, agentId))));
   });
   afterEach(function() {
     return Promise.all(_.map(agentsId, agentId => client.deleteAgent(agentId)));

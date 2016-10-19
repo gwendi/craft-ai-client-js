@@ -1,6 +1,6 @@
 import craftai, { errors } from '../src';
 
-import MODEL_1 from './data/model_1.json';
+import CONFIGURATION_1 from './data/configuration_1.json';
 
 describe('client.getAgent(<agentId>)', function() {
   let client;
@@ -12,7 +12,7 @@ describe('client.getAgent(<agentId>)', function() {
   });
   beforeEach(function() {
     return client.deleteAgent(agentId) // Delete any preexisting agent with this id.
-      .then(() => client.createAgent(MODEL_1, agentId))
+      .then(() => client.createAgent(CONFIGURATION_1, agentId))
       .then(createdAgent => {
         expect(createdAgent).to.be.ok;
         agent = createdAgent;
