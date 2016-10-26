@@ -23,14 +23,14 @@ export default function parse( input ) {
     };
   }
   else if (semver.satisfies(version, '0.0.2')) {
-    if (_.isUndefined( json[1] ) || _.isUndefined( json[1].configuration )) {
-      throw new Error('Invalid decision tree format, no configuration found.');
+    if (_.isUndefined( json[1] ) || _.isUndefined( json[1].model )) {
+      throw new Error('Invalid decision tree format, no model found.');
     }
     if (_.isUndefined( json[2] )) {
       throw new Error('Invalid decision tree format, no tree found.');
     }
     return {
-      configuration: json[1].configuration,
+      configuration: json[1].model,
       tree: json[2]
     };
   }

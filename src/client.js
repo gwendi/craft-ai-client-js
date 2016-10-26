@@ -117,7 +117,7 @@ export default function createClient(cfg) {
         }
       }, this)
       .then(agent => {
-        debug(`Agent '${agent.id}' created using configuration '${agent.configuration}'`);
+        debug(`Agent '${agent.id}' created.`);
         if (deleteOnExit) {
           agentsToDeleteOnExit.push(agent.id);
         }
