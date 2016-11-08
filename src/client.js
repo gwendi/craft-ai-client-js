@@ -36,6 +36,7 @@ export default function createClient(cfg) {
         }, cfg);
       });
     }
+    process.exit();
   });
 
   // The cache of operations to send.
