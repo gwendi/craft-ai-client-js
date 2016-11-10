@@ -3,7 +3,6 @@ import * as errors from './errors';
 import Debug from 'debug';
 import decide from './decide';
 import DEFAULTS from './defaults';
-import onExit from './onExit';
 import request from './request';
 import Time from './time';
 
@@ -22,22 +21,6 @@ export default function createClient(cfg) {
   if (!_.has(cfg, 'owner') || !_.isString(cfg.owner)) {
     return Promise.reject(new errors.CraftAiBadRequestError('Bad Request, unable to create a client with no or invalid owner provided.'));
   }
-
-  // The list of agents to remove 'onExit'
-  let agentsToDeleteOnExit = [];
-  onExit(() => {
-    if (agentsToDeleteOnExit.length > 0) {
-      debug(`Deleting agents ${ _.map(agentsToDeleteOnExit, agent => `'${agent}'`).join(', ') } before exiting...`);
-      _.forEach(agentsToDeleteOnExit, agentId => {
-        request({
-          method: 'DELETE',
-          path: '/agents/' + agentId,
-          asynchronous: false
-        }, cfg);
-      });
-    }
-    process.exit();
-  });
 
   // The cache of operations to send.
   let agentsOperations = {};
@@ -104,7 +87,7 @@ export default function createClient(cfg) {
   // 'Public' attributes & methods
   let instance = _.defaults(_.clone(cfg), DEFAULTS, {
     cfg: cfg,
-    createAgent: function(configuration, id = undefined, deleteOnExit = false) {
+    createAgent: function(configuration, id = undefined) {
       if (_.isUndefined(configuration) || !_.isObject(configuration)) {
         return Promise.reject(new errors.CraftAiBadRequestError('Bad Request, unable to create an agent with no or invalid configuration provided.'));
       }
@@ -119,9 +102,6 @@ export default function createClient(cfg) {
       }, this)
       .then(agent => {
         debug(`Agent '${agent.id}' created.`);
-        if (deleteOnExit) {
-          agentsToDeleteOnExit.push(agent.id);
-        }
         return agent;
       });
     },
