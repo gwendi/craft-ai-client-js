@@ -51,10 +51,10 @@ function decideRecursion( node, context ) {
 }
 
 export default function decide( json, ...args ) {
-  const { tree, model } = parse(json);
-  const ctx = model ? context(model, ...args) : _.extend({}, ...args);
+  const { tree, configuration } = parse(json);
+  const ctx = configuration ? context(configuration, ...args) : _.extend({}, ...args);
   const rawDecision = decideRecursion(tree, ctx);
-  const outputName = (model && model.output) ? model.output[0] : 'value';
+  const outputName = (configuration && configuration.output) ? configuration.output[0] : 'value';
   let decision = {};
   decision.decision = {};
   decision.decision[outputName] = rawDecision.value;

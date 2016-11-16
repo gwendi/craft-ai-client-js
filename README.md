@@ -77,7 +77,7 @@ In this example, we will create an agent that learns the **decision model** of a
 - `peopleCount` which is a `continuous` property,
 - `timeOfDay` which is a `time_of_day` property,
 - `timezone`, a property of type `timezone` needed to generate proper values for `timeOfDay` (cf. the [context properties type section](#context-properties-types) for further information),
-- and finally `lightbulbState` which is an `enum` property that is also the output of this model.
+- and finally `lightbulbState` which is an `enum` property that is also the output.
 
 ```js
 var AGENT_ID = 'my_first_agent';
@@ -308,9 +308,9 @@ If you prefer to get started from an existing code base, the official Node.JS st
 
 **craft ai** agents belong to **owners**. In the current version, each identified users defines a owner, in the future we will introduce shared organization-level owners.
 
-### Model ###
+### Configuration ###
 
-Each agent is based upon a model, the model defines:
+Each agent has a configuration defining:
 
 - the context schema, i.e. the list of property keys and their type (as defined in the following section),
 - the output properties, i.e. the list of property keys on which the agent takes decisions,
@@ -346,17 +346,17 @@ hour and `mm` the minutes from UTC (eg. `+01:30`)), between `-12:00` and
 > :information_source: By default, the values of the `time_of_day` and `day_of_week`
 > properties are generated from the [`timestamp`](#timestamp) of an agent's
 > state and the agent's current `timezone`. Therefore, whenever you use generated
-> `time_of_day` and/or `day_of_week` in your model, you **must** provide a
+> `time_of_day` and/or `day_of_week` in your configuration, you **must** provide a
 > `timezone` value in the context.
 >
 > If you wish to provide their values manually, add `is_generated: false` to the
-> time types properties in your model. In this case, since you provide the values, the
+> time types properties in your configuration. In this case, since you provide the values, the
 > `timezone` property is not required, and you must update the context whenever
 > one of these time values changes in a way that is significant for your system.
 
 ##### Examples #####
 
-Let's take a look at the following model. It is designed to model the **color**
+Let's take a look at the following configuration. It is designed to model the **color**
 of a lightbulb (the `lightbulbColor` property, defined as an output) depending
 on the **outside light intensity** (the `lightIntensity` property), the **time
 of the day** (the `time` property) and the **day of the week** (the `day`
@@ -474,11 +474,11 @@ const nowP5 = new craftai.Time(undefined, '+05:00');
 
 #### Create ####
 
-Create a new agent, and create its [model](#model).
+Create a new agent, and create its [configuration](#configuration).
 
 ```js
 client.createAgent(
-  { // The model
+  { // The configuration
     context: {
       peopleCount: {
         type: 'continuous'
@@ -496,33 +496,36 @@ client.createAgent(
     output: [ 'lightbulbState' ],
     time_quantum: 100
   },
-  'impervious_kraken', // id for the agent, if undefined a random id is generated
-  true, // `deleteOnExit`, default is false
+  'impervious_kraken' // id for the agent, if undefined a random id is generated
 )
 .then(function(agent) {
   // Work on the agent here
   // agent = {
   //   "id": <agent_id>,
-  //   "model": <model_id>
+  //   "configuration": {
+  //     "context": {
+  //       "peopleCount": {
+  //         "type": "continuous"
+  //       },
+  //       "timeOfDay": {
+  //         "type": "time_of_day"
+  //       },
+  //       "timezone": {
+  //         "type": "timezone"
+  //       },
+  //       "lightbulbState": {
+  //         "type": "enum"
+  //       }
+  //     },
+  //     "output": [ "lightbulbState" ],
+  //     "time_quantum": 100
+  //   }
   // }
 })
 .catch(function(error) {
   // Catch errors here
 })
 ```
-
-##### `deleteOnExit` #####
-
-If `true`, the agent will delete itself when the window unloads or the process
-exits.
-
-- The **browser** version relies on the
-[_beforeunload_](https://developer.mozilla.org/en-US/docs/Web/Events/beforeunload)
-event.
-- The **nodejs** version relies on the
-[_uncaughtException_](https://nodejs.org/api/process.html#process_event_uncaughtexception),
-[_unhandledrejection_](https://nodejs.org/api/process.html#process_event_unhandledrejection),
-[_SIGINT_, _SIGTERM_, _SIGQUIT_ and _SIGHUP_](https://nodejs.org/api/process.html#process_signal_events) events.
 
 #### Delete ####
 
@@ -720,7 +723,7 @@ When you [compute](#compute) a decision tree, **craft ai** should always return 
 
 In version `"0.0.3"`, the other included elements are (in order):
 
-- the agent's model as specified during the agent's [creation](#create-agent)
+- the agent's configuration as specified during the agent's [creation](#create-agent)
 - the tree itself as a JSON object:
 
   * Internal nodes are represented by a `"predicate_property"` and a `"children"` array. The latter contains the actual two children of the current node and the criterion (`"predicate"`) on the `"predicate_property"`'s value, to decide which child to walk down towards.

@@ -1,7 +1,7 @@
 import context from '../src/context';
 import Time from '../src/time';
 
-const MODEL_1 = {
+const CONFIGURATION_1 = {
   context: {
     blind: {
       type: 'enum'
@@ -30,7 +30,7 @@ describe('context(...)', function() {
   it('is able to create a context skeleton', function() {
     expect(
       context(
-        MODEL_1
+        CONFIGURATION_1
       )
     ).to.be.deep.equal({
       blind: undefined,
@@ -43,7 +43,7 @@ describe('context(...)', function() {
   it('is able to fill the relevant keys using the given time', function() {
     expect(
       context(
-        MODEL_1,
+        CONFIGURATION_1,
         {
           blind: 'closed'
         },
@@ -60,7 +60,7 @@ describe('context(...)', function() {
   it('is able to overrides the relevant keys using the given time', function() {
     expect(
       context(
-        MODEL_1,
+        CONFIGURATION_1,
         {
           blind: 'opened',
           day: 4,
@@ -80,7 +80,7 @@ describe('context(...)', function() {
   it('is able to overrides the given time using the relevant keys', function() {
     expect(
       context(
-        MODEL_1,
+        CONFIGURATION_1,
         new Time('2016-06-09T18:28:49.000Z', '-05:00'),
         {
           blind: 'opened',
@@ -100,7 +100,7 @@ describe('context(...)', function() {
   it('is able to select the actually needed keys', function() {
     expect(
       context(
-        MODEL_1,
+        CONFIGURATION_1,
         {
           blind: 'opened',
           day: 4,
@@ -120,7 +120,7 @@ describe('context(...)', function() {
   it('is able to generate the relevant keys using the given time', function() {
     expect(
       context(
-        MODEL_1,
+        CONFIGURATION_1,
         new Time('2016-06-09T18:28:49.000Z', '-05:00')
       )
     ).to.be.deep.equal({

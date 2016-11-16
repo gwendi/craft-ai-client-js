@@ -1,12 +1,12 @@
 import _ from 'lodash';
 import Time from './time';
 
-export default function createContext(model, ...args) {
-  if ( _.isUndefined(model) || _.isUndefined(model.context) ) {
-    throw new Error('Unable to create context, the given model is not valid');
+export default function createContext(configuration, ...args) {
+  if ( _.isUndefined(configuration) || _.isUndefined(configuration.context) ) {
+    throw new Error('Unable to create context, the given configuration is not valid');
   }
 
-  const inputContext = _.omit(model.context, model.output);
+  const inputContext = _.omit(configuration.context, configuration.output);
 
   return _.reduce(args, (context, arg) => {
     if (arg instanceof Time) {
