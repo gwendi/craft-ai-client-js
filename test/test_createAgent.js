@@ -3,7 +3,7 @@ import craftai, { errors } from '../src';
 import CONFIGURATION_1 from './data/configuration_1.json';
 import INVALID_CONFIGURATION_1 from './data/invalid_configuration_1.json';
 
-describe('client.createAgent(<configuration>, [id], [deleteOnExit])', function() {
+describe('client.createAgent(<configuration>, [id])', function() {
   let client;
   before(function() {
     client = craftai(CRAFT_CFG);
@@ -52,15 +52,6 @@ describe('client.createAgent(<configuration>, [id], [deleteOnExit])', function()
       })
       .then(() => {
         return client.deleteAgent(agentId);
-      });
-  });
-  it('should succeed when using a valid configuration, specified id and destroyOnExit', function() {
-    const agentId = 'suicidal_on_exit';
-    return client.deleteAgent(agentId) // Delete any preexisting agent with this id.
-      .then(() => client.createAgent(CONFIGURATION_1, agentId, true))
-      .then(agent => {
-        expect(agent).to.be.ok;
-        expect(agent.id).to.be.a.string;
       });
   });
   it('should fail when using an undefined configuration', function() {
