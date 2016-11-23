@@ -7,11 +7,15 @@ describe('Time(...)', function() {
     expect(Time()).to.have.property('timestamp');
     expect(Time()).to.have.property('day_of_week');
     expect(Time()).to.have.property('time_of_day');
+    expect(Time()).to.have.property('day_of_month');
+    expect(Time()).to.have.property('month_of_year');
     expect(Time()).to.have.property('timezone');
 
     expect(new Time()).to.have.property('timestamp');
     expect(new Time()).to.have.property('day_of_week');
     expect(new Time()).to.have.property('time_of_day');
+    expect(new Time()).to.have.property('day_of_month');
+    expect(new Time()).to.have.property('month_of_year');
     expect(new Time()).to.have.property('timezone');
   });
 
@@ -29,6 +33,8 @@ describe('Time(...)', function() {
           utc: '2016-06-09T18:28:49.000Z',
           timestamp: 1465496929,
           day_of_week: 3,
+          day_of_month: 9,
+          month_of_year: 6,
           time_of_day: 20.480277777777776,
           timezone: '+02:00'
         });
@@ -42,6 +48,8 @@ describe('Time(...)', function() {
         utc: '2016-06-09T18:28:49.000Z',
         timestamp: 1465496929,
         day_of_week: 3,
+        day_of_month: 9,
+        month_of_year: 6,
         time_of_day: 20.480277777777776,
         timezone: '+02:00'
       });
@@ -52,6 +60,8 @@ describe('Time(...)', function() {
         utc: '2016-06-09T18:28:49.000Z',
         timestamp: 1465496929,
         day_of_week: 4,
+        day_of_month: 10,
+        month_of_year: 6,
         time_of_day: 4.480277777777778,
         timezone: '+10:00'
       });
@@ -66,6 +76,8 @@ describe('Time(...)', function() {
           utc: '2010-01-01T04:06:30.000Z',
           timestamp: 1262318790,
           day_of_week: 4,
+          day_of_month: 1,
+          month_of_year: 1,
           time_of_day: 5.108333333333333,
           timezone: '+01:00'
         });
@@ -79,6 +91,8 @@ describe('Time(...)', function() {
           utc: '2010-01-01T04:06:30.000Z',
           timestamp: 1262318790,
           day_of_week: 3,
+          day_of_month: 31,
+          month_of_year: 12,
           time_of_day: 18.108333333333334,
           timezone: '-10:00'
         });
@@ -91,6 +105,8 @@ describe('Time(...)', function() {
         timestamp: 230536800,
         day_of_week: 4,
         time_of_day: 1,
+        day_of_month: 22,
+        month_of_year: 4,
         timezone: '-05:00'
       });
     });
@@ -101,6 +117,8 @@ describe('Time(...)', function() {
         timestamp: 230518800,
         day_of_week: 4,
         time_of_day: 1,
+        day_of_month: 22,
+        month_of_year: 4,
         timezone: '+00:00'
       });
     });
@@ -111,6 +129,8 @@ describe('Time(...)', function() {
         timestamp: 230536800,
         day_of_week: 4,
         time_of_day: 8,
+        day_of_month: 22,
+        month_of_year: 4,
         timezone: '+02:00'
       });
     });
@@ -125,6 +145,8 @@ describe('Time(...)', function() {
           timestamp: 1427295000,
           day_of_week: 2,
           time_of_day: 15.833333333333334,
+          day_of_month: 25,
+          month_of_year: 3,
           timezone: '+01:00'
         });
       });
@@ -138,6 +160,8 @@ describe('Time(...)', function() {
           timestamp: 1427295000,
           day_of_week: 2,
           time_of_day: 20.333333333333332,
+          day_of_month: 25,
+          month_of_year: 3,
           timezone: '+05:30'
         });
       });
@@ -151,6 +175,8 @@ describe('Time(...)', function() {
           timestamp: 1427620530,
           day_of_week: 7,
           time_of_day: 11.258333333333333,
+          day_of_month: 29,
+          month_of_year: 3,
           timezone: '+02:00'
         });
       });
@@ -165,6 +191,8 @@ describe('Time(...)', function() {
           utc: '2013-07-22T22:00:00.000Z',
           timestamp: 1374530400,
           day_of_week: 1,
+          day_of_month: 23,
+          month_of_year: 7,
           time_of_day: 0,
           timezone: '+02:00'
         });
@@ -179,6 +207,8 @@ describe('Time(...)', function() {
           timestamp: 1465801140,
           day_of_week: 0,
           time_of_day: 8.983333333333333,
+          day_of_month: 13,
+          month_of_year: 6,
           timezone: '+02:00'
         });
       });
@@ -192,6 +222,8 @@ describe('Time(...)', function() {
         timestamp: 230536800,
         day_of_week: 4,
         time_of_day: 1,
+        day_of_month: 22,
+        month_of_year: 4,
         timezone: '-05:00'
       });
     });
@@ -202,6 +234,8 @@ describe('Time(...)', function() {
         timestamp: 230536800,
         day_of_week: 4,
         time_of_day: 8.5,
+        day_of_month: 22,
+        month_of_year: 4,
         timezone: '+02:30'
       });
     });
