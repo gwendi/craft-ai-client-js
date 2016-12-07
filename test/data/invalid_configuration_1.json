@@ -10,5 +10,6 @@
       "type": "enum"
     }
   },
-  "time_quantum": 100
+  "time_quantum": 100,
+  "learning_period": 100000
 }

@@ -85,7 +85,7 @@ export default function request(req, cfg) {
     headers: {}
   });
 
-  req.url = cfg.url + '/api/' + cfg.owner + req.path;
+  req.url = cfg.url + '/api/v1/' + cfg.owner + req.path;
   if (_.size(req.query) > 0) {
     req.url = req.url + '?' + _.map(_.keys(req.query), key => `${key}=${req.query[key]}`).join('&');
   }
