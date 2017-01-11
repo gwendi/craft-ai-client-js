@@ -8,7 +8,20 @@ let operators = {
   'continuous.greaterthan'        : (context, value) => context * 1 > value,
   'continuous.greaterthanorequal' : (context, value) => context * 1 >= value,
   'continuous.lessthan'           : (context, value) => context * 1 < value,
-  'continuous.lessthanorequal'    : (context, value) => context * 1 <= value
+  'continuous.lessthanorequal'    : (context, value) => context * 1 <= value,
+  'interval.in'                   : (context, value) => {
+    let context_val = context * 1;
+    let from = value.interval.from_included;
+    let to = value.interval.to_excluded;
+    //the interval is not looping
+    if (from < to) {
+      return (context_val>=from && context_val<to);
+    }
+    //the interval IS looping
+    else {
+      return (context_val>=from || context_val<to);
+    }
+  }
 };
 
 function decideRecursion( node, context ) {

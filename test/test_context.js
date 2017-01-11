@@ -13,6 +13,12 @@ const CONFIGURATION_1 = {
     day: {
       type: 'day_of_week'
     },
+    date: {
+      type: 'day_of_month'
+    },
+    month: {
+      type: 'month_of_year'
+    },
     tz: {
       type: 'timezone'
     },
@@ -35,6 +41,8 @@ describe('context(...)', function() {
     ).to.be.deep.equal({
       blind: undefined,
       day: undefined,
+      date: undefined,
+      month: undefined,
       time: undefined,
       tz: undefined
     });
@@ -53,6 +61,8 @@ describe('context(...)', function() {
       blind: 'closed',
       day: 3,
       time: 13.480277777777777,
+      date: 9,
+      month: 6,
       tz: '-05:00'
     });
   });
@@ -65,6 +75,8 @@ describe('context(...)', function() {
           blind: 'opened',
           day: 4,
           time: 12.5,
+          date: 1,
+          month: 10,
           tz: '+03:00'
         },
         new Time('2016-06-09T18:28:49.000Z', '-05:00')
@@ -73,6 +85,8 @@ describe('context(...)', function() {
       blind: 'opened',
       day: 3,
       time: 13.480277777777777,
+      date: 9,
+      month: 6,
       tz: '-05:00'
     });
   });
@@ -86,6 +100,8 @@ describe('context(...)', function() {
           blind: 'opened',
           day: 4,
           time: 12.5,
+          date: 10,
+          month: 1,
           tz: '+03:00'
         }
       )
@@ -93,6 +109,8 @@ describe('context(...)', function() {
       blind: 'opened',
       day: 4,
       time: 12.5,
+      date: 10,
+      month: 1,
       tz: '+03:00'
     });
   });
@@ -105,6 +123,8 @@ describe('context(...)', function() {
           blind: 'opened',
           day: 4,
           time: 12.5,
+          date: 9,
+          month: 6,
           tz: '+03:00',
           foo: 34
         }
@@ -113,6 +133,8 @@ describe('context(...)', function() {
       blind: 'opened',
       day: 4,
       time: 12.5,
+      date: 9,
+      month: 6,
       tz: '+03:00'
     });
   });
@@ -127,6 +149,8 @@ describe('context(...)', function() {
       blind: undefined,
       day: 3,
       time: 13.480277777777777,
+      date: 9,
+      month: 6,
       tz: '-05:00'
     });
   });
