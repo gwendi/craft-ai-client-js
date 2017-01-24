@@ -7,6 +7,7 @@ dotenv.load({ silent: true });
 
 const CRAFT_CFG = {
   owner: process.env.CRAFT_OWNER,
+  project: process.env.CRAFT_PROJECT,
   token: process.env.CRAFT_TOKEN
 };
 

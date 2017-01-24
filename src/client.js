@@ -18,6 +18,16 @@ export default function createClient(cfg) {
   if (!_.has(cfg, 'url') || !_.isString(cfg.url)) {
     return Promise.reject(new errors.CraftAiBadRequestError('Bad Request, unable to create a client with no or invalid url provided.'));
   }
+  if (!_.has(cfg, 'project') || !_.isString(cfg.project)) {
+    return Promise.reject(new errors.CraftAiBadRequestError('Bad Request, unable to create a client with no or invalid project provided.'));
+  }
+  else {
+    const splittedProject = cfg.project.split('/');
+    if (splittedProject.length >= 2) {
+      cfg.owner = splittedProject[0];
+      cfg.project = splittedProject[1];
+    }
+  }
   if (!_.has(cfg, 'owner') || !_.isString(cfg.owner)) {
     return Promise.reject(new errors.CraftAiBadRequestError('Bad Request, unable to create a client with no or invalid owner provided.'));
   }
@@ -50,7 +60,7 @@ export default function createClient(cfg) {
         new Promise(resolve => resolve())
       )
       .then(() => {
-        debug(`Successfully added ${operationsToFlush.length} operations to the agent ${cfg.owner}/${agentId} context.`);
+        debug(`Successfully added ${operationsToFlush.length} operations to the agent ${cfg.owner}/${cfg.project}/${agentId} context.`);
       });
     }
   };
