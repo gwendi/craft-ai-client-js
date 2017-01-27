@@ -23,3 +23,7 @@ env:
   global:
   - CRAFT_OWNER=stanley_kubick
   - secure: wbMfuXKdEehLRADjh47kq/vuUAdsdANa1xnM+bWh5a9R22snBEgKQzz3WhGsL2Ag0IjpYE1amhVA4Z14lAMSJ1M99cxlEgLpJkMGy+32+A9V6j7k0Vm0N37/GSUxN7LWoZNXSjhs8jZ6UO1vqI642ByeLlUfzdi09MqVPZgpicR9BqG1W2yR29hHTWSTjjpU3XPB/16AVZAIuPbb2B7MILQwlnhO/gnaT6yTFxwSgYV/e33vH+Tulsubv9Bfqbn0YVsVoqUUopOAMYLeG2LkXK0gFr1TC3Rlw8yHWAicniwMNEkwlqzifJND8HQZ/IJE80Qo3deluxOoE0l6iVQ0BV3QH8Pf93FcbiUaUtdzsSQH6vE6046+I/K7qyeihO/J71SUD/bjPiK1YGjVxV7uzvxk9mYQpBAVyWzpnguHGc6Swn/bmGlQs69D2OjavSZzvG7nTIz3240oMCZ+0BR/tNzZQggEB/+tgAYnd+0Gvz/3f8QntwZjWcb+23aOr7EVBWiNr79RRSFRTksfhzKAHWIu5I9P3GFokZdmOzAlnEYYruFWLqz4CIE2meT9V/UwWQU4gI3SUZpVVttQ8Ji1zVDBl//8BGyFrF/6/yGzsocivWBr+yDoZoDbkGlWaBbwg432CdZPfYn2HjNLIdr/akx4/0eDS8SH+O5IKFdW3Bg=
+notifications:
+  slack: craft-ai:ZNnQErHJhw40oKmphy3fNGza
+  email:
+    - ops@craft.ai
