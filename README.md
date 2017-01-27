@@ -721,13 +721,13 @@ Decision trees are computed at specific timestamps, directly by **craft ai** whi
 
 When you [compute](#compute) a decision tree, **craft ai** should always return you an array containing the **tree version** as the first element. This **tree version** determines what other information is included in the response body.
 
-In version `"0.0.3"`, the other included elements are (in order):
+In version `"0.0.4"`, the other included elements are (in order):
 
 - the agent's configuration as specified during the agent's [creation](#create-agent)
 - the tree itself as a JSON object:
 
-  * Internal nodes are represented by a `"predicate_property"` and a `"children"` array. The latter contains the actual two children of the current node and the criterion (`"predicate"`) on the `"predicate_property"`'s value, to decide which child to walk down towards.
-  * Leaves have an output `"value"` and a `"confidence"` for this value, instead of a `"predicate_property"` and a `"children"` array.
+  * Internal nodes are represented by a `"predicate_property"` and a `"children"` array. The latter contains the actual children of the current node and the criterion (`"predicate"`) on the `"predicate_property"`'s value, to decide which child to walk down towards.
+  * Leaves have an output `"value"` and a `"confidence"` for this value, instead of a `"predicate_property"` and a `"children"` array. When the output is a numerical type, leaves also have a `"standard_deviation"` around the `"value"` for this leaf.
   * The root has one more key than regular nodes: the `"output_property"` which defines what is the actual meaning of the leaves' value.
 
 #### Compute ####
@@ -743,7 +743,7 @@ client.getAgentDecisionTree(
   /* Outputed tree is the following
   [
     {
-      "version": "0.0.3"
+      "version": "0.0.4"
     },
     {
       "context": {

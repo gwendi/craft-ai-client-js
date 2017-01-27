@@ -46,6 +46,18 @@ export default function parse( input ) {
       tree: json[2]
     };
   }
+  else if (semver.satisfies(version, '0.0.4')) {
+    if (_.isUndefined( json[1] )) {
+      throw new Error('Invalid decision tree format, no configuration found.');
+    }
+    if (_.isUndefined( json[2] )) {
+      throw new Error('Invalid decision tree format, no tree found.');
+    }
+    return {
+      configuration: json[1],
+      tree: json[2]
+    };
+  }
   else {
     throw new Error(`Invalid decision tree format, "${version}" is not a supported version.`);
   }
