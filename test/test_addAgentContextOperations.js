@@ -53,7 +53,7 @@ describe('client.addAgentContextOperations(<agentId>, <operations>)', function()
       });
   });
   it('should succeed when passing unordered diffs', function() {
-    return client.addAgentContextOperations(agent.id, 
+    return client.addAgentContextOperations(agent.id,
       [
         {
           'timestamp': 1464600000,
@@ -86,7 +86,7 @@ describe('client.addAgentContextOperations(<agentId>, <operations>)', function()
             'lightIntensity': 0,
             'lightbulbColor': 'black'
           }
-        }          
+        }
       ]
     )
     .then(() => {
@@ -179,11 +179,35 @@ describe('client.addAgentContextOperations(<agentId>, <operations>)', function()
         ]);
       });
   });
-  it('should fail when using out of order operations with immediate flush)', function() {
+  it('should fail when using out of order operations with immediate flush', function() {
     return client.addAgentContextOperations(agent.id, CONFIGURATION_1_OPERATIONS_1, true)
       .then(() => {
         return client.addAgentContextOperations(agent.id, CONFIGURATION_1_OPERATIONS_1[0], true);
       })
+      .catch(err => {
+        expect(err).to.be.an.instanceof(errors.CraftAiError);
+        expect(err).to.be.an.instanceof(errors.CraftAiBadRequestError);
+      })
+      .then(() => {
+        return client.getAgentContextOperations(agent.id);
+      })
+      .then(retrievedOperations => {
+        expect(retrievedOperations).to.be.deep.equal(CONFIGURATION_1_OPERATIONS_1);
+      });
+  });
+  it('should fail when sending invalid operations or no operation at all', function() {
+    return client.addAgentContextOperations(agent.id, CONFIGURATION_1_OPERATIONS_1, true)
+      .then(() => client.addAgentContextOperations(agent.id, [], true))
+      .catch(err => {
+        expect(err).to.be.an.instanceof(errors.CraftAiError);
+        expect(err).to.be.an.instanceof(errors.CraftAiBadRequestError);
+      })
+      .then(() => client.addAgentContextOperations(agent.id, undefined, true))
+      .catch(err => {
+        expect(err).to.be.an.instanceof(errors.CraftAiError);
+        expect(err).to.be.an.instanceof(errors.CraftAiBadRequestError);
+      })
+      .then(() => client.addAgentContextOperations(agent.id, [undefined, undefined], true))
       .catch(err => {
         expect(err).to.be.an.instanceof(errors.CraftAiError);
         expect(err).to.be.an.instanceof(errors.CraftAiBadRequestError);

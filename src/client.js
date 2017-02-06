@@ -182,7 +182,8 @@ export default function createClient(cfg) {
         // Only one given operation
         operations = [operations];
       }
-      if (_.isUndefined(operations) || !_.isArray(operations) ) {
+      _.remove(operations, _.isUndefined);
+      if (_.size(operations) == 0) {
         return Promise.reject(new errors.CraftAiBadRequestError('Bad Request, unable to add agent context operations with no or invalid operations provided.'));
       }
 
