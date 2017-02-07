@@ -32,6 +32,7 @@ function parseBody(req, resBody) {
     debug(`Invalid json response from ${req.method} ${req.path}: ${resBody}`, err);
     throw new errors.CraftAiInternalError(
       'Internal Error, the craft ai server responded an invalid json document.', {
+        more: resBodyUtf8,
         request: req
       }
     );
@@ -65,6 +66,12 @@ function parseResponse(req, resStatus, resBody) {
     case 500:
       throw new errors.CraftAiInternalError(parseBody(req, resBody).message, {
         request: req
+      });
+    case 504:
+      throw new errors.CraftAiInternalError({
+        message: 'Response has timed out',
+        request: req,
+        status: resStatus
       });
     default:
       throw new errors.CraftAiUnknownError({
