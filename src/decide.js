@@ -30,6 +30,7 @@ function decideRecursion( node, context ) {
     return {
       value: node.value,
       confidence: node.confidence || 0,
+      standard_deviation: node.standard_deviation, // may be undefined
       predicates: []
     };
   }
@@ -55,6 +56,7 @@ function decideRecursion( node, context ) {
   return {
     value: result.value,
     confidence: result.confidence,
+    standard_deviation: result.standard_deviation,
     predicates: [{
       property: property,
       op: matchingChild.predicate.op,
@@ -71,6 +73,9 @@ export default function decide( json, ...args ) {
   let decision = {};
   decision.decision = {};
   decision.decision[outputName] = rawDecision.value;
+  if (!_.isUndefined(rawDecision.standard_deviation)) {
+    decision.decision.standard_deviation = rawDecision.standard_deviation;
+  }
   decision.confidence = rawDecision.confidence;
   decision.predicates = rawDecision.predicates;
   decision.context = ctx;
