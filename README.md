@@ -317,7 +317,12 @@ Each agent has a configuration defining:
 
 > :warning: In the current version, only one output property can be provided, and must be of type `enum`.
 
-- the `time_quantum` is the minimum amount of time, in seconds, that is meaningful for an agent; context updates occurring faster than this quantum won't be taken into account.
+- the `time_quantum` is the minimum amount of time, in seconds, that is meaningful for an agent; context updates occurring faster than this quantum won't be taken into account. As a rule of thumb, you should always choose the largest value that seems right and reduce it, if necessary, after some tests.
+- the `learning_period` is the maximum amount of time, in seconds, that matters for an agent; the agent's decision model can ignore context that is older than this duration. You should generally choose the smallest value that fits this description.
+
+> :warning: if no time_quantum is specified, default value is 600.
+
+> :warning: if no learning_period is specified, the default value is 15000 time quantums.
 
 #### Context properties types ####
 
@@ -328,7 +333,7 @@ Each agent has a configuration defining:
 - `enum` properties can take any string values;
 - `continuous` properties can take any real number value.
 
-##### Time types: `timezone`, `time_of_day` and `day_of_week` #####
+##### Time types: `timezone`, `time_of_day`, `day_of_week`, `day_of_month` and `month_of_year` #####
 
 **craft ai** defines 3 types related to time:
 
@@ -338,6 +343,8 @@ representing the number of hours in the day since midnight (e.g. 13.5 means
 - `day_of_week` properties can take any integer belonging to **[0, 6]**, each
 value represents a day of the week starting from Monday (0 is Monday, 6 is
 Sunday).
+- `day_of_month` properties can take any integer belonging to **[1, 31]**, each value represents a day of the month.
+- `month_of_year` properties can take any integer belonging to **[1, 12]**, each value represents a month of year.
 - `timezone` properties can take string values representing the timezone as an
 offset from UTC, the expected format is **±[hh]:[mm]** where `hh` represent the
 hour and `mm` the minutes from UTC (eg. `+01:30`)), between `-12:00` and
@@ -371,7 +378,9 @@ color is changed from red to blue then from blue to purple in less that 1
 minutes and 40 seconds, only the change from red to purple will be taken into
 account.
 
-> :warning: if no time_quantum is specified, default value is 600.
+The `learning_period` is set to 108 000 seconds (one month) , which means that
+the state of the lightbulb from more than a month ago can be ignored when learning
+the decision model.
 
 ```json
 {
@@ -393,11 +402,12 @@ account.
       }
   },
   "output": ["lightbulbColor"],
-  "time_quantum": 100
+  "time_quantum": 100,
+  "learning_period": 108000
 }
 ```
 
-In this second examples, the `time` property is not generated, no property of
+In this second example, the `time` property is not generated, no property of
 type `timezone` is therefore needed. However values of `time` must be manually
 provided continuously.
 
@@ -416,7 +426,8 @@ provided continuously.
     }
   },
   "output": ["lightbulbColor"],
-  "time_quantum": 100
+  "time_quantum": 100,
+  "learning_period": 108000
 }
 ```
 
@@ -494,7 +505,8 @@ client.createAgent(
       }
     },
     output: [ 'lightbulbState' ],
-    time_quantum: 100
+    time_quantum: 100,
+    learning_period: 108000
   },
   'impervious_kraken' // id for the agent, if undefined a random id is generated
 )
@@ -518,7 +530,8 @@ client.createAgent(
   //       }
   //     },
   //     "output": [ "lightbulbState" ],
-  //     "time_quantum": 100
+  //     "time_quantum": 100,
+  //     "learning_period": 108000
   //   }
   // }
 })
@@ -721,13 +734,13 @@ Decision trees are computed at specific timestamps, directly by **craft ai** whi
 
 When you [compute](#compute) a decision tree, **craft ai** should always return you an array containing the **tree version** as the first element. This **tree version** determines what other information is included in the response body.
 
-In version `"0.0.4"`, the other included elements are (in order):
+In version `"0.0.3"`, the other included elements are (in order):
 
 - the agent's configuration as specified during the agent's [creation](#create-agent)
 - the tree itself as a JSON object:
 
-  * Internal nodes are represented by a `"predicate_property"` and a `"children"` array. The latter contains the actual children of the current node and the criterion (`"predicate"`) on the `"predicate_property"`'s value, to decide which child to walk down towards.
-  * Leaves have an output `"value"` and a `"confidence"` for this value, instead of a `"predicate_property"` and a `"children"` array. When the output is a numerical type, leaves also have a `"standard_deviation"` around the `"value"` for this leaf.
+  * Internal nodes are represented by a `"predicate_property"` and a `"children"` array. The latter contains the actual two children of the current node and the criterion (`"predicate"`) on the `"predicate_property"`'s value, to decide which child to walk down towards.
+  * Leaves have an output `"value"` and a `"confidence"` for this value, instead of a `"predicate_property"` and a `"children"` array.
   * The root has one more key than regular nodes: the `"output_property"` which defines what is the actual meaning of the leaves' value.
 
 #### Compute ####
@@ -743,7 +756,7 @@ client.getAgentDecisionTree(
   /* Outputed tree is the following
   [
     {
-      "version": "0.0.4"
+      "version": "0.0.3"
     },
     {
       "context": {
@@ -764,7 +777,8 @@ client.getAgentDecisionTree(
       "output": [
         "lightbulbState"
       ],
-      "time_quantum": 600
+      "time_quantum": 600,
+      "learning_period": 108000
     },
     {
       "children": [
@@ -876,7 +890,7 @@ let decision = craftai.decide(
   new craftai.Time('2010-01-01T07:30:30'));
 ```
 
-> Any number of partial contexts and/or `craftai.Time` instances can be provided to `decide`, it follows the same semantics than [Object.assign(...)](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object/assign): the later arguments overriding the properties value from the previous ones)
+> Any number of partial contexts and/or `craftai.Time` instances can be provided to `decide`, it follows the same semantics than [Object.assign(...)](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/assign): the later arguments overriding the properties value from the previous ones)
 
 A computed `decision` would look like:
 
