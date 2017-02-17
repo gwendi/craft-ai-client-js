@@ -33,7 +33,7 @@
 
   ```sh
   npm run update_readme
-  npm commit -a -m"Update README.md from upstream"
+  git commit -a -m"Update README.md from upstream"
   ```
 
 3. Bump the version and push

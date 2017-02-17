@@ -138,7 +138,7 @@ We have now created our first agent but it is not able to do much, yet. To learn
 
 In the following we add 8 operations:
 
-1. The initial one sets the initial state of the agent, on July the 25th of 2016 at 5:30, in Paris, nobody is there and the light is off;
+1. The initial one sets the initial state of the agent, on July 25 2016 at 5:30, in Paris, nobody is there and the light is off;
 2. At 7:02, someone enters the room the light is turned on;
 3. At 7:15, someone else enters the room;
 4. At 7:31, the light is turned off;
@@ -228,9 +228,9 @@ _For further information, check the ['add context operations' reference document
 
 ### 5 - Compute the decision tree ###
 
-The agent has acquired a context history, we can now compute a decision tree from it!
+The agent has acquired a context history, we can now compute a decision tree from it! A decision tree models the output, allowing us to estimate what the output would be in a given context.
 
-The decision tree is computed at a given timestamp, which means it will consider the context history from the creation of this agent up to this moment. Let's first try to compute the decision tree at midnight on July the 26th of 2016.
+The decision tree is computed at a given timestamp, which means it will consider the context history from the creation of this agent up to this moment. Let's first try to compute the decision tree at midnight on July 26, 2016.
 
 ```js
 var AGENT_ID = 'my_first_agent';
@@ -315,12 +315,12 @@ Each agent has a configuration defining:
 - the context schema, i.e. the list of property keys and their type (as defined in the following section),
 - the output properties, i.e. the list of property keys on which the agent takes decisions,
 
-> :warning: In the current version, only one output property can be provided, and must be of type `enum`.
+> :warning: In the current version, only one output property can be provided.
 
 - the `time_quantum` is the minimum amount of time, in seconds, that is meaningful for an agent; context updates occurring faster than this quantum won't be taken into account. As a rule of thumb, you should always choose the largest value that seems right and reduce it, if necessary, after some tests.
 - the `learning_period` is the maximum amount of time, in seconds, that matters for an agent; the agent's decision model can ignore context that is older than this duration. You should generally choose the smallest value that fits this description.
 
-> :warning: if no time_quantum is specified, default value is 600.
+> :warning: if no time_quantum is specified, the default value is 600.
 
 > :warning: if no learning_period is specified, the default value is 15000 time quantums.
 
@@ -330,7 +330,7 @@ Each agent has a configuration defining:
 
 `enum` and `continuous` are the two base **craft ai** types:
 
-- `enum` properties can take any string values;
+- `enum` properties can take any string value;
 - `continuous` properties can take any real number value.
 
 ##### Time types: `timezone`, `time_of_day`, `day_of_week`, `day_of_month` and `month_of_year` #####
@@ -344,7 +344,7 @@ representing the number of hours in the day since midnight (e.g. 13.5 means
 value represents a day of the week starting from Monday (0 is Monday, 6 is
 Sunday).
 - `day_of_month` properties can take any integer belonging to **[1, 31]**, each value represents a day of the month.
-- `month_of_year` properties can take any integer belonging to **[1, 12]**, each value represents a month of year.
+- `month_of_year` properties can take any integer belonging to **[1, 12]**, each value represents a month of the year.
 - `timezone` properties can take string values representing the timezone as an
 offset from UTC, the expected format is **±[hh]:[mm]** where `hh` represent the
 hour and `mm` the minutes from UTC (eg. `+01:30`)), between `-12:00` and
@@ -354,7 +354,7 @@ hour and `mm` the minutes from UTC (eg. `+01:30`)), between `-12:00` and
 > properties are generated from the [`timestamp`](#timestamp) of an agent's
 > state and the agent's current `timezone`. Therefore, whenever you use generated
 > `time_of_day` and/or `day_of_week` in your configuration, you **must** provide a
-> `timezone` value in the context.
+> `timezone` value in the context. There can only be one `timezone` property.
 >
 > If you wish to provide their values manually, add `is_generated: false` to the
 > time types properties in your configuration. In this case, since you provide the values, the
@@ -732,16 +732,16 @@ client.getAgentContext(
 
 Decision trees are computed at specific timestamps, directly by **craft ai** which learns from the context operations [added](#add-operations) throughout time.
 
-When you [compute](#compute) a decision tree, **craft ai** should always return you an array containing the **tree version** as the first element. This **tree version** determines what other information is included in the response body.
+When you [compute](#compute) a decision tree, **craft ai** returns an array containing the **tree version** as the first element. This **tree version** determines what other information is included in the response body.
 
-In version `"0.0.3"`, the other included elements are (in order):
+In version `"0.0.4"`, the other included elements are (in order):
 
 - the agent's configuration as specified during the agent's [creation](#create-agent)
 - the tree itself as a JSON object:
 
-  * Internal nodes are represented by a `"predicate_property"` and a `"children"` array. The latter contains the actual two children of the current node and the criterion (`"predicate"`) on the `"predicate_property"`'s value, to decide which child to walk down towards.
-  * Leaves have an output `"value"` and a `"confidence"` for this value, instead of a `"predicate_property"` and a `"children"` array.
-  * The root has one more key than regular nodes: the `"output_property"` which defines what is the actual meaning of the leaves' value.
+  * Internal nodes are represented by a `"predicate_property"` and a `"children"` array. The latter contains the children of the current node and the criterion (`"predicate"`) on the `"predicate_property"`'s value, to decide which child matches a context.
+  * Leaves have an output `"value"` and a `"confidence"` for this value, instead of a `"predicate_property"` and a `"children"` array. `"value`" is an estimation of the output in the contexts matching the node. `"confidence"` is a number between 0 and 1 that indicates how confident **craft ai** is that the output is a reliable prediction.  When the output is a numerical type, leaves also have a `"standard_deviation"` that indicates a margin of error around the `"value"`.
+  * The root has one more key than regular nodes: the `"output_property"`, the `"value"` of leaves are values of this property.
 
 #### Compute ####
 
@@ -756,7 +756,7 @@ client.getAgentDecisionTree(
   /* Outputed tree is the following
   [
     {
-      "version": "0.0.3"
+      "version": "0.0.4"
     },
     {
       "context": {
@@ -846,7 +846,7 @@ client.getAgentDecisionTree(
 
 #### Take Decision ####
 
-The first method retrieves the decision tree then apply it on the given context.
+The first method retrieves the decision tree then applies it on the given context.
 
 ```js
 client.computeAgentDecision(
@@ -890,9 +890,9 @@ let decision = craftai.decide(
   new craftai.Time('2010-01-01T07:30:30'));
 ```
 
-> Any number of partial contexts and/or `craftai.Time` instances can be provided to `decide`, it follows the same semantics than [Object.assign(...)](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/assign): the later arguments overriding the properties value from the previous ones)
+> Any number of partial contexts and/or `craftai.Time` instances can be provided to `decide`, it follows the same semantics as [Object.assign(...)](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/assign): the later arguments overriding the properties value from the previous ones)
 
-A computed `decision` would look like:
+A computed `decision` on an `enum`type would look like:
 
 ```js
 {
@@ -918,6 +918,23 @@ A computed `decision` would look like:
     }
   ]
 }
+```
+
+A `decision` for a numerical output type would look like:
+
+```js
+  decision: {
+    lightbulbIntensity: 10.5,
+    standard_deviation: 1.25, // For numerical types, this field is returned in decisions.
+  }
+
+A `decision` in a case where the tree cannot make a prediction:
+
+```js
+  decision: {
+    lightbulbState: null, // No decision
+  },
+  confidence: 0 // Zero confidence if the decision is null
 ```
 
 ### Logging ###
