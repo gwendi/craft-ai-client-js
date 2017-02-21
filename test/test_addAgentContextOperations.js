@@ -281,4 +281,18 @@ describe('client.addAgentContextOperations(<agentId>, <operations>)', function()
         expect(retrievedOperations).to.be.deep.empty;
       });
   });
+  it('should work properly when sending operations to more than one agent', function() {
+    return Promise.all([
+      client.addAgentContextOperations(agents[0].id, CONFIGURATION_1_OPERATIONS_2),
+      client.addAgentContextOperations(agents[1].id, CONFIGURATION_1_OPERATIONS_1)
+    ])
+      .then(() => client.getAgentContextOperations(agents[0].id))
+      .then(retrievedOperations => {
+        expect(retrievedOperations).to.be.deep.equal(CONFIGURATION_1_OPERATIONS_2);
+      })
+      .then(() => client.getAgentContextOperations(agents[1].id))
+      .then(retrievedOperations => {
+        expect(retrievedOperations).to.be.deep.equal(CONFIGURATION_1_OPERATIONS_1);
+      });
+  });
 });
