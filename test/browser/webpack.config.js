@@ -17,7 +17,8 @@ module.exports = {
       __CRAFT_TOKEN__: JSON.stringify(process.env.CRAFT_TOKEN),
       __CRAFT_OWNER__: JSON.stringify(process.env.CRAFT_OWNER),
       __CRAFT_URL__: JSON.stringify(process.env.CRAFT_URL),
-      __DEBUG__: JSON.stringify(process.env.DEBUG)
+      __DEBUG__: JSON.stringify(process.env.DEBUG),
+      __TRAVIS_BUILD_ID__: JSON.stringify(process.env.TRAVIS_BUILD_ID)
     })
   ],
   module: {

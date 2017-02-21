@@ -5,7 +5,7 @@ import CONFIGURATION_1 from './data/configuration_1.json';
 describe('client.getAgent(<agentId>)', function() {
   let client;
   let agent;
-  const agentId = 'get_agent_agent';
+  const agentId = 'get_agent_' + RUN_ID;
   before(function() {
     client = craftai(CRAFT_CFG);
     expect(client).to.be.ok;
