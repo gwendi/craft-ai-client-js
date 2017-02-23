@@ -19,3 +19,4 @@ window.CRAFT_CFG = CRAFT_CFG;
 window.debug = Debug('craft-ai:client:test');
 window.expect = expect;
 window.IN_BROWSER = true;
+global.RUN_ID = __TRAVIS_BUILD_ID__ || 'local';

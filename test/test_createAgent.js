@@ -22,7 +22,7 @@ describe('client.createAgent(<configuration>, [id])', function() {
       });
   });
   it('should succeed when using a valid configuration and specified id', function() {
-    const agentId = 'unspeakable_dermatologist';
+    const agentId = 'unspeakable_dermatologist_' + RUN_ID;
     return client.deleteAgent(agentId) // Destroy any preexisting agent with this id.
       .then(() => client.createAgent(CONFIGURATION_1, agentId))
       .then(agent => {
@@ -38,7 +38,7 @@ describe('client.createAgent(<configuration>, [id])', function() {
       });
   });
   it('should fail when trying to use the same id twice', function() {
-    const agentId = 'aphasic_parrot';
+    const agentId = 'aphasic_parrot_' + RUN_ID;
     return client.deleteAgent(agentId) // Delete any preexisting agent with this id.
       .then(() => client.createAgent(CONFIGURATION_1, agentId))
       .then(agent => {

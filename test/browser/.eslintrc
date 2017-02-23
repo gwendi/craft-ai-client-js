@@ -3,6 +3,7 @@
     "__CRAFT_TOKEN__": true,
     "__CRAFT_OWNER__": true,
     "__CRAFT_URL__": true,
-    "__DEBUG__": true
+    "__DEBUG__": true,
+    "__TRAVIS_BUILD_ID__": true
   }
 }

@@ -9,7 +9,7 @@ const CONFIGURATION_1_OPERATIONS_1_TO = _.last(CONFIGURATION_1_OPERATIONS_1).tim
 describe('client.getAgentDecisionTree(<agentId>, <timestamp>)', function() {
   let client;
   let agent;
-  const agentId = 'get_agent_decision_tree_agent';
+  const agentId = 'get_agent_decision_tree_' + RUN_ID;
   before(function() {
     client = craftai(CRAFT_CFG);
     expect(client).to.be.ok;
