@@ -12,9 +12,11 @@ If you're reading this you are probably already registered with **craft ai**, if
 
 > :construction: **craft ai** is currently in private beta, as such we validate accounts, this step should be quick.
 
-### 1 - Retrieve your credentials ###
+### 1 - Create a project ###
 
-Once your account is setup, you need to retrieve your **owner** and **token**. Both are available in the 'Settings' tab in the **craft ai** control center at [`https://beta.craft.ai/settings`](https://beta.craft.ai/settings).
+Once your account is setup, let's create your first **project**! Go in the 'Projects' tab in the **craft ai** control center at [`https://beta.craft.ai/projects`](https://beta.craft.ai/settings), and press **Create a project**. 
+
+Once it's done, you can click on your newly created project to retrieve its tokens. There are two types of tokens: **read** and **write**. You'll need the **write** token to create, update and delete your agent.
 
 ### 2 - Setup ###
 
@@ -58,6 +60,7 @@ to include a specific version specify it in the url like
 ```js
 let client = craftai({
   owner: '{owner}',
+  project: '{project}'
   token: '{token}',
   // Optional, default value is 500
   operationsChunksSize: {max_number_of_operations_sent_at_once},
@@ -110,7 +113,7 @@ client.createAgent(
 });
 ```
 
-Pretty straightforward to test! Open [`https://beta.craft.ai/inspector`](https://beta.craft.ai/inspector), your agent is now listed.
+Pretty straightforward to test! Open [`https://beta.craft.ai/inspector`](https://beta.craft.ai/inspector), select you project and your agent is now listed.
 
 Now, if you run that a second time, you'll get an error: the agent `'my_first_agent'` is already existing. Let's see how we can delete it before recreating it.
 
@@ -304,9 +307,9 @@ If you prefer to get started from an existing code base, the official Node.JS st
 
 ## API ##
 
-### Owner ###
+### Project ###
 
-**craft ai** agents belong to **owners**. In the current version, each identified users defines a owner, in the future we will introduce shared organization-level owners.
+**craft ai** agents belong to **projects**. In the current version, each identified users defines a owner and can create projects for themselves, in the future we will introduce shared projects.
 
 ### Configuration ###
 
@@ -892,7 +895,7 @@ let decision = craftai.decide(
 
 > Any number of partial contexts and/or `craftai.Time` instances can be provided to `decide`, it follows the same semantics as [Object.assign(...)](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/assign): the later arguments overriding the properties value from the previous ones)
 
-A computed `decision` on an `enum`type would look like:
+A computed `decision` on an `enum` type would look like:
 
 ```js
 {
@@ -925,8 +928,9 @@ A `decision` for a numerical output type would look like:
 ```js
   decision: {
     lightbulbIntensity: 10.5,
-    standard_deviation: 1.25, // For numerical types, this field is returned in decisions.
+    standard_deviation: 1.25
   }
+```
 
 A `decision` in a case where the tree cannot make a prediction:
 
