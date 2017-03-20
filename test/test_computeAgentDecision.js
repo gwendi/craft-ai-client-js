@@ -44,7 +44,7 @@ describe('client.computeAgentDecision(<agentId>, <timestamp>, <context>)', funct
     })
       .then(context => {
         expect(context).to.be.ok;
-        expect(context.decision.lightbulbColor).to.be.equal('black');
+        expect(context.lightbulbColor).to.be.equal('black');
       });
   });
 });

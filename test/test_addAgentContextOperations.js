@@ -41,7 +41,7 @@ describe('client.addAgentContextOperations(<agentId>, <operations>)', function()
         return client.getAgentContext(agents[0].id, CONFIGURATION_1_OPERATIONS_1_TO + 100);
       })
       .then(context => {
-        expect(context.context).to.be.deep.equal(CONFIGURATION_1_OPERATIONS_1_LAST.diff);
+        expect(context.context).to.be.deep.equal(CONFIGURATION_1_OPERATIONS_1_LAST.context);
         expect(context.timestamp).to.equal(CONFIGURATION_1_OPERATIONS_1_TO + 100);
       })
       .then(() => {
@@ -56,12 +56,12 @@ describe('client.addAgentContextOperations(<agentId>, <operations>)', function()
         expect(retrievedAgent.lastTimestamp).to.be.equal(CONFIGURATION_1_OPERATIONS_1_TO);
       });
   });
-  it('should succeed when passing unordered diffs', function() {
+  it('should succeed when passing unordered contexts', function() {
     return client.addAgentContextOperations(agents[0].id,
       [
         {
           'timestamp': 1464600000,
-          'diff': {
+          'context': {
             'presence': 'robert',
             'lightIntensity': 0.4,
             'lightbulbColor': 'green'
@@ -69,7 +69,7 @@ describe('client.addAgentContextOperations(<agentId>, <operations>)', function()
         },
         {
           'timestamp': 1464601500,
-          'diff': {
+          'context': {
             'presence': 'robert',
             'lightIntensity': 0.6,
             'lightbulbColor': 'green'
@@ -77,7 +77,7 @@ describe('client.addAgentContextOperations(<agentId>, <operations>)', function()
         },
         {
           'timestamp': 1464601000,
-          'diff': {
+          'context': {
             'presence': 'gisele',
             'lightIntensity': 0.4,
             'lightbulbColor': 'blue'
@@ -85,7 +85,7 @@ describe('client.addAgentContextOperations(<agentId>, <operations>)', function()
         },
         {
           'timestamp': 1464600500,
-          'diff': {
+          'context': {
             'presence': 'none',
             'lightIntensity': 0,
             'lightbulbColor': 'black'
@@ -109,7 +109,7 @@ describe('client.addAgentContextOperations(<agentId>, <operations>)', function()
     return client.addAgentContextOperations(agents[0].id, [
       {
         timestamp: '1998-04-23T04:30:00-05:00',
-        diff: {
+        context: {
           presence: 'robert',
           lightIntensity: 0.4,
           lightbulbColor: 'green'
@@ -117,7 +117,7 @@ describe('client.addAgentContextOperations(<agentId>, <operations>)', function()
       },
       {
         timestamp: '1998-04-23T04:32:25-05:00',
-        diff: {
+        context: {
           presence: 'none'
         }
       }
@@ -129,7 +129,7 @@ describe('client.addAgentContextOperations(<agentId>, <operations>)', function()
         expect(operations).to.be.deep.equal([
           {
             timestamp: 893323800,
-            diff: {
+            context: {
               presence: 'robert',
               lightIntensity: 0.4,
               lightbulbColor: 'green'
@@ -137,7 +137,7 @@ describe('client.addAgentContextOperations(<agentId>, <operations>)', function()
           },
           {
             timestamp: 893323945,
-            diff: {
+            context: {
               presence: 'none'
             }
           }
@@ -148,7 +148,7 @@ describe('client.addAgentContextOperations(<agentId>, <operations>)', function()
     return client.addAgentContextOperations(agents[0].id, [
       {
         timestamp: new Time('1998-04-23T04:30:00-05:00'),
-        diff: {
+        context: {
           presence: 'robert',
           lightIntensity: 0.4,
           lightbulbColor: 'green'
@@ -156,7 +156,7 @@ describe('client.addAgentContextOperations(<agentId>, <operations>)', function()
       },
       {
         timestamp: Time('1998-04-23T04:32:25-05:00'),
-        diff: {
+        context: {
           presence: 'none'
         }
       }
@@ -168,7 +168,7 @@ describe('client.addAgentContextOperations(<agentId>, <operations>)', function()
         expect(operations).to.be.deep.equal([
           {
             timestamp: 893323800,
-            diff: {
+            context: {
               presence: 'robert',
               lightIntensity: 0.4,
               lightbulbColor: 'green'
@@ -176,7 +176,7 @@ describe('client.addAgentContextOperations(<agentId>, <operations>)', function()
           },
           {
             timestamp: 893323945,
-            diff: {
+            context: {
               presence: 'none'
             }
           }
