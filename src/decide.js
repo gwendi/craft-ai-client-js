@@ -24,28 +24,20 @@ let operators = {
   }
 };
 
-function decideRecursion(node, context, decisionRules = []) {
-  // Update decision rules
-  if (node.decision_rule) {
-    const indexOfPredicate = _.findIndex(decisionRules, (decisionRule) => {
-      return decisionRule.property == node.decision_rule.property;
-    });
-    if (indexOfPredicate == -1) {
-      decisionRules.push(node.decision_rule);
-    }
-    else {
-      decisionRules[indexOfPredicate] = node.decision_rule;
-    }
-  }
-
+function decideRecursion(node, context) {
   // Leaf
   if (node.predicted_value) {
-    return {
+    let leafNode = {
       predicted_value: node.predicted_value,
       confidence: node.confidence || 0,
-      standard_deviation: node.standard_deviation, // may be undefined
-      decision_rules: decisionRules
+      decision_rules: []
     };
+
+    if (node.standard_deviation) {
+      leafNode.standard_deviation = node.standard_deviation;
+    }
+
+    return leafNode;
   }
 
   // Regular node
@@ -67,12 +59,12 @@ function decideRecursion(node, context, decisionRules = []) {
   }
 
   // matching child found: recurse !
-  const result = decideRecursion(matchingChild, context, decisionRules);
+  const result = decideRecursion(matchingChild, context);
 
   let finalResult = {
     predicted_value: result.predicted_value,
     confidence: result.confidence,
-    decision_rules: result.decision_rules
+    decision_rules: [matchingChild.decision_rule].concat(result.decision_rules)
   };
 
   if (result.standard_deviation) {
