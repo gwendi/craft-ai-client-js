@@ -3,8 +3,8 @@ import semver from 'semver';
 
 export default function parse(input) {
   const json = _.isObject(input) ? input : JSON.parse(input);
-  if (!_.isObject(json)) {
-    throw new Error('Invalid decision tree format, the given json is not an array.');
+  if (!_.isObject(json) || _.isArray(input)) {
+    throw new Error('Invalid decision tree format, the given json is not an object.');
   }
   if (_.isUndefined(json) || _.isUndefined(json._version)) {
     throw new Error('Invalid decision tree format, unable to find the version informations.');
