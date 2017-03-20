@@ -64,13 +64,13 @@ function decideRecursion(node, context) {
 }
 
 export default function decide( json, ...args ) {
-  const { tree, configuration } = parse(json);
+  const { _version, trees, configuration } = parse(json);
   const ctx = configuration ? context(configuration, ...args) : _.extend({}, ...args);
   return {
-    _version: tree._version,
+    _version: _version,
     context: ctx,
     output: _.assign(..._.map(configuration.output, (output) => ({
-      [output]: decideRecursion(tree, ctx)
+      [output]: decideRecursion(trees[output], ctx)
     })))
   };
 }
