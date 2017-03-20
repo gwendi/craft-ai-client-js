@@ -4,7 +4,7 @@ import context from './context';
 
 let operators = {
   'is'    : (context, value) => context === value,
-  '='     : (context, value) => context  * 1 === value,
+  '='     : (context, value) => context * 1 === value,
   '>'     : (context, value) => context * 1 > value,
   '>='    : (context, value) => context * 1 >= value,
   '<'     : (context, value) => context * 1 < value,
@@ -24,14 +24,27 @@ let operators = {
   }
 };
 
-function decideRecursion(node, context) {
+function decideRecursion(node, context, decisionRules = []) {
+  // Update decision rules
+  if (node.decision_rule) {
+    const indexOfPredicate = _.findIndex(decisionRules, (decisionRule) => {
+      return decisionRule.property == node.decision_rule.property;
+    });
+    if (indexOfPredicate == -1) {
+      decisionRules.push(node.decision_rule);
+    }
+    else {
+      decisionRules[indexOfPredicate] = node.decision_rule;
+    }
+  }
+
   // Leaf
   if (node.predicted_value) {
     return {
       predicted_value: node.predicted_value,
       confidence: node.confidence || 0,
       standard_deviation: node.standard_deviation, // may be undefined
-      decision_rules: node.decision_rule ? [node.decision_rule] : []
+      decision_rules: decisionRules
     };
   }
 
@@ -41,11 +54,11 @@ function decideRecursion(node, context) {
     (child) => {
       const decision_rule = child.decision_rule;
       const property = decision_rule.property;
-      if ( _.isUndefined(context[property]) ) {
+      if (_.isUndefined(context[property])) {
         throw new Error( `Unable to take decision, property "${property}" is not defined in the given context.` );
       }
 
-      operators[decision_rule.operator](context[property], decision_rule.operand);
+      return operators[decision_rule.operator](context[property], decision_rule.operand);
     }
   );
 
@@ -54,13 +67,19 @@ function decideRecursion(node, context) {
   }
 
   // matching child found: recurse !
-  const result = decideRecursion( matchingChild, context );
-  return {
+  const result = decideRecursion(matchingChild, context, decisionRules);
+
+  let finalResult = {
     predicted_value: result.predicted_value,
     confidence: result.confidence,
-    standard_deviation: result.standard_deviation,
-    decision_rules: [matchingChild.decision_rule].concat(result.decision_rule)
+    decision_rules: result.decision_rules
   };
+
+  if (result.standard_deviation) {
+    finalResult.standard_deviation = result.standard_deviation;
+  }
+
+  return finalResult;
 }
 
 export default function decide( json, ...args ) {
