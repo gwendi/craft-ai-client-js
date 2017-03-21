@@ -14,5 +14,5 @@
     "lightbulbColor"
   ],
   "time_quantum": 100,
-  "learning_period": 100000
+  "learning_period": 1500000
 }
