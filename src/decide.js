@@ -26,7 +26,7 @@ let operators = {
 
 function decideRecursion(node, context) {
   // Leaf
-  if (node.predicted_value) {
+  if (!(node.children && node.children.length)) {
     let leafNode = {
       predicted_value: node.predicted_value,
       confidence: node.confidence || 0,
