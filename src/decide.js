@@ -4,11 +4,8 @@ import context from './context';
 
 let operators = {
   'is'    : (context, value) => context === value,
-  '='     : (context, value) => context * 1 === value,
-  '>'     : (context, value) => context * 1 > value,
   '>='    : (context, value) => context * 1 >= value,
   '<'     : (context, value) => context * 1 < value,
-  '<='    : (context, value) => context * 1 <= value,
   '[in['  : (context, value) => {
     let context_val = context * 1;
     let from = value[0];
