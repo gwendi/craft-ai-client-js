@@ -1,7 +1,7 @@
 [
   {
     "timestamp": 1464600000,
-    "diff": {
+    "context": {
       "presence": "robert",
       "lightIntensity": 0.4,
       "lightbulbColor": "green"
@@ -9,7 +9,7 @@
   },
   {
     "timestamp": 1464600500,
-    "diff": {
+    "context": {
       "presence": "none",
       "lightIntensity": 0,
       "lightbulbColor": "black"
@@ -17,7 +17,7 @@
   },
   {
     "timestamp": 1464601000,
-    "diff": {
+    "context": {
       "presence": "gisele",
       "lightIntensity": 0.4,
       "lightbulbColor": "blue"
@@ -25,7 +25,7 @@
   },
   {
     "timestamp": 1464601500,
-    "diff": {
+    "context": {
       "presence": "robert",
       "lightIntensity": 0.6,
       "lightbulbColor": "green"

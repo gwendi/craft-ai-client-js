@@ -3,81 +3,82 @@ import parse from './parse';
 import context from './context';
 
 let operators = {
-  'continuous.equal'              : (context, value) => context  * 1 === value,
-  'enum.equal'                    : (context, value) => context === value,
-  'continuous.greaterthan'        : (context, value) => context * 1 > value,
-  'continuous.greaterthanorequal' : (context, value) => context * 1 >= value,
-  'continuous.lessthan'           : (context, value) => context * 1 < value,
-  'continuous.lessthanorequal'    : (context, value) => context * 1 <= value,
-  'interval.in'                   : (context, value) => {
+  'is'    : (context, value) => context === value,
+  '>='    : (context, value) => context * 1 >= value,
+  '<'     : (context, value) => context * 1 < value,
+  '[in['  : (context, value) => {
     let context_val = context * 1;
-    let from = value.interval.from_included;
-    let to = value.interval.to_excluded;
+    let from = value[0];
+    let to = value[1];
     //the interval is not looping
     if (from < to) {
-      return (context_val>=from && context_val<to);
+      return (context_val >= from && context_val < to);
     }
     //the interval IS looping
     else {
-      return (context_val>=from || context_val<to);
+      return (context_val >= from || context_val < to);
     }
   }
 };
 
-function decideRecursion( node, context ) {
+function decideRecursion(node, context) {
   // Leaf
-  if ( _.isUndefined( node.predicate_property )) {
-    return {
-      value: node.value,
+  if (!(node.children && node.children.length)) {
+    let leafNode = {
+      predicted_value: node.predicted_value,
       confidence: node.confidence || 0,
-      standard_deviation: node.standard_deviation, // may be undefined
-      predicates: []
+      decision_rules: []
     };
+
+    if (node.standard_deviation) {
+      leafNode.standard_deviation = node.standard_deviation;
+    }
+
+    return leafNode;
   }
 
   // Regular node
-  const property = node.predicate_property;
-  if ( _.isUndefined(context[property]) ) {
-    throw new Error( `Unable to take decision, property "${property}" is not defined in the given context.` );
-  }
-
-  const propertyValue = context[property];
-
   const matchingChild = _.find(
     node.children,
-    child => operators[child.predicate.op](propertyValue, child.predicate.value));
+    (child) => {
+      const decision_rule = child.decision_rule;
+      const property = decision_rule.property;
+      if (_.isUndefined(context[property])) {
+        throw new Error( `Unable to take decision, property "${property}" is not defined in the given context.` );
+      }
+
+      return operators[decision_rule.operator](context[property], decision_rule.operand);
+    }
+  );
 
   if (_.isUndefined(matchingChild)) {
     throw new Error( 'Unable to take decision, no matching child found.' );
   }
 
   // matching child found: recurse !
-  const result = decideRecursion( matchingChild, context );
-  return {
-    value: result.value,
+  const result = decideRecursion(matchingChild, context);
+
+  let finalResult = {
+    predicted_value: result.predicted_value,
     confidence: result.confidence,
-    standard_deviation: result.standard_deviation,
-    predicates: [{
-      property: property,
-      op: matchingChild.predicate.op,
-      value: matchingChild.predicate.value
-    }].concat(result.predicates)
+    decision_rules: [matchingChild.decision_rule].concat(result.decision_rules)
   };
+
+  if (result.standard_deviation) {
+    finalResult.standard_deviation = result.standard_deviation;
+  }
+
+  return finalResult;
 }
 
 export default function decide( json, ...args ) {
-  const { tree, configuration } = parse(json);
+  const { _version, trees, configuration } = parse(json);
   const ctx = configuration ? context(configuration, ...args) : _.extend({}, ...args);
-  const rawDecision = decideRecursion(tree, ctx);
-  const outputName = (configuration && configuration.output) ? configuration.output[0] : 'value';
-  let decision = {};
-  decision.decision = {};
-  decision.decision[outputName] = rawDecision.value;
-  if (!_.isUndefined(rawDecision.standard_deviation)) {
-    decision.decision.standard_deviation = rawDecision.standard_deviation;
-  }
-  decision.confidence = rawDecision.confidence;
-  decision.predicates = rawDecision.predicates;
-  decision.context = ctx;
-  return decision;
+  return {
+    _version: _version,
+    context: ctx,
+    output: _.assign(..._.map(configuration.output, (output) => ({
+      [output]: decideRecursion(trees[output], ctx)
+    })))
+  };
 }

@@ -165,7 +165,7 @@ client.deleteAgent(AGENT_ID)
     [
       {
         timestamp: 1469410200,
-        diff: {
+        context: {
           timezone: '+02:00',
           peopleCount: 0,
           lightbulbState: 'OFF'
@@ -173,44 +173,44 @@ client.deleteAgent(AGENT_ID)
       },
       {
         timestamp: 1469415720,
-        diff: {
+        context: {
           peopleCount: 1,
           lightbulbState: 'ON'
         }
       },
       {
         timestamp: 1469416500,
-        diff: {
+        context: {
           peopleCount: 2
         }
       },
       {
         timestamp: 1469417460,
-        diff: {
+        context: {
           lightbulbState: 'OFF'
         }
       },
       {
         timestamp: 1469419920,
-        diff: {
+        context: {
           peopleCount: 0
         }
       },
       {
         timestamp: 1469460180,
-        diff: {
+        context: {
           peopleCount: 2
         }
       },
       {
         timestamp: 1469471700,
-        diff: {
+        context: {
           lightbulbState: 'ON'
         }
       },
       {
         timestamp: 1469473560,
-        diff: {
+        context: {
           peopleCount: 0
         }
       }
@@ -290,7 +290,7 @@ client.deleteAgent(AGENT_ID)
     timeOfDay: 7.25,
     peopleCount: 2
   });
-  console.log('The anticipated lightbulb state is "' + res.decision.lightbulbState + '".');
+  console.log('The anticipated lightbulb state is "' + res.output.lightbulbState.predicted_value + '".');
 })
 .catch(function(error) {
   console.err('Error!', error);
@@ -516,6 +516,7 @@ client.createAgent(
 .then(function(agent) {
   // Work on the agent here
   // agent = {
+  //   "_version": <version>
   //   "id": <agent_id>,
   //   "configuration": {
   //     "context": {
@@ -611,7 +612,7 @@ client.addAgentContextOperations(
   [ // The list of operations
     {
       timestamp: 1469410200, // Operation timestamp
-      diff: {
+      context: {
         timezone: '+02:00',
         peopleCount: 0,
         lightbulbState: 'OFF'
@@ -619,44 +620,44 @@ client.addAgentContextOperations(
     },
     {
       timestamp: 1469415720,
-      diff: {
+      context: {
         peopleCount: 1,
         lightbulbState: 'ON'
       }
     },
     {
       timestamp: 1469416500,
-      diff: {
+      context: {
         peopleCount: 2
       }
     },
     {
       timestamp: 1469417460,
-      diff: {
+      context: {
         lightbulbState: 'OFF'
       }
     },
     {
       timestamp: 1469419920,
-      diff: {
+      context: {
         peopleCount: 0
       }
     },
     {
       timestamp: 1469460180,
-      diff: {
+      context: {
         peopleCount: 2
       }
     },
     {
       timestamp: 1469471700,
-      diff: {
+      context: {
         lightbulbState: 'ON'
       }
     },
     {
       timestamp: 1469473560,
-      diff: {
+      context: {
         peopleCount: 0
       }
     }
@@ -735,16 +736,14 @@ client.getAgentContext(
 
 Decision trees are computed at specific timestamps, directly by **craft ai** which learns from the context operations [added](#add-operations) throughout time.
 
-When you [compute](#compute) a decision tree, **craft ai** returns an array containing the **tree version** as the first element. This **tree version** determines what other information is included in the response body.
-
-In version `"0.0.4"`, the other included elements are (in order):
-
+When you [compute](#compute) a decision tree, **craft ai** returns an object containing:
+- the **API version**
 - the agent's configuration as specified during the agent's [creation](#create-agent)
 - the tree itself as a JSON object:
 
-  * Internal nodes are represented by a `"predicate_property"` and a `"children"` array. The latter contains the children of the current node and the criterion (`"predicate"`) on the `"predicate_property"`'s value, to decide which child matches a context.
-  * Leaves have an output `"value"` and a `"confidence"` for this value, instead of a `"predicate_property"` and a `"children"` array. `"value`" is an estimation of the output in the contexts matching the node. `"confidence"` is a number between 0 and 1 that indicates how confident **craft ai** is that the output is a reliable prediction.  When the output is a numerical type, leaves also have a `"standard_deviation"` that indicates a margin of error around the `"value"`.
-  * The root has one more key than regular nodes: the `"output_property"`, the `"value"` of leaves are values of this property.
+  * Internal nodes are represented by a `"decision_rule"` object and a `"children"` array. The first one, contains the `"property`, and the `"property"`'s value, to decide which child matches a context.
+  * Leaves have a `"predicted_value"`, `"confidence"` and `"decision_rule"` object for this value, instead of a `"children"` array. `"predicted_value`" is an estimation of the output in the contexts matching the node. `"confidence"` is a number between 0 and 1 that indicates how confident **craft ai** is that the output is a reliable prediction.  When the output is a numerical type, leaves also have a `"standard_deviation"` that indicates a margin of error around the `"predicted_value"`.
+  * The root only contains a `"children"` array.
 
 #### Compute ####
 
@@ -757,11 +756,9 @@ client.getAgentDecisionTree(
   // Works with the given tree
   console.log(tree);
   /* Outputed tree is the following
-  [
-    {
-      "version": "0.0.4"
-    },
-    {
+  {
+    "_version": "1.0.0",
+    "configuration": {
       "context": {
         "peopleCount": {
           "type": "continuous"
@@ -783,61 +780,65 @@ client.getAgentDecisionTree(
       "time_quantum": 600,
       "learning_period": 108000
     },
-    {
-      "children": [
-        {
-          "children": [
-            {
-              "children": [
-                {
-                  "confidence": 0.9545537233352661,
-                  "predicate": {
-                    "op": "continuous.lessthan",
-                    "value": 1
+    "trees": {
+      "lightbulbState": {
+        "children": [
+          {
+            "children": [
+              {
+                "children": [
+                  {
+                    "confidence": 0.9545537233352661,
+                    "decision_rule": {
+                      "operator": "<",
+                      "operand": 1,
+                      "property": "peopleCount"
+                    },
+                    "predicted_value": "OFF"
                   },
-                  "value": "OFF"
-                },
-                {
-                  "confidence": 0.8630361557006836,
-                  "predicate": {
-                    "op": "continuous.greaterthanorequal",
-                    "value": 1
-                  },
-                  "value": "ON"
+                  {
+                    "confidence": 0.8630361557006836,
+                    "decision_rule": {
+                      "operator": ">=",
+                      "operand": 1,
+                      "property": "peopleCount"
+                    },
+                    "predicted_value": "ON"
+                  }
+                ],
+                "decision_rule": {
+                  "operator": "<",
+                  "operand": 5.666666507720947,
+                  "property": "timeOfDay"
                 }
-              ],
-              "predicate": {
-                "op": "continuous.lessthan",
-                "value": 5.666666507720947
               },
-              "predicate_property": "peopleCount"
-            },
-            {
-              "confidence": 0.9947378635406494,
-              "predicate": {
-                "op": "continuous.greaterthanorequal",
-                "value": 5.666666507720947
-              },
-              "value": "OFF"
+              {
+                "confidence": 0.9947378635406494,
+                "decision_rule": {
+                  "operator": ">=",
+                  "operand": 5.666666507720947,
+                  "property": "timeOfDay"
+                },
+                "predicted_value": "OFF"
+              }
+            ],
+            "decision_rule": {
+              "operator": "<",
+              "operand": 20.66666603088379,
+              "property": "timeOfDay"
             }
-          ],
-          "predicate": {
-            "op": "continuous.lessthan",
-            "value": 20.66666603088379
           },
-          "predicate_property": "timeOfDay"
-        },
-        {
-          "confidence": 0.8630361557006836,
-          "predicate": {
-            "op": "continuous.greaterthanorequal",
-            "value": 20.66666603088379
-          },
-          "value": "ON"
-        }
-      ],
-      "output_property": "lightbulbState",
-      "predicate_property": "timeOfDay"
+          {
+            "confidence": 0.8630361557006836,
+            "decision_rule": {
+              "operator": ">=",
+              "operand": 20.66666603088379,
+              "property": "timeOfDay"
+            },
+            "predicted_value": "ON"
+          }
+        ],
+      }
     }
   ]
   */
@@ -904,31 +905,37 @@ A computed `decision` on an `enum` type would look like:
     timeOfDay: 7.5,
     peopleCount: 3
   },
-  decision: { // The decision itself
-    lightbulbState: 'ON'
-  },
-  confidence: 0.9937745256361138, // The confidence in the decision
-  predicates: [ // The ordered list of predicates that were validated to reach this decision
-    {
-      property: 'timeOfDay',
-      op: 'continuous.greaterthanorequal',
-      value: 6
-    },
-    {
-      property: 'peopleCount',
-      op: 'continuous.greaterthanorequal',
-      value: 2
+  output: { // The decision itself
+    lightbulbState: {
+      predicted_value: 'ON',
+      confidence: 0.9937745256361138, // The confidence in the decision
+      decision_rules: [ // The ordered list of decision_rules that were validated to reach this decision
+        {
+          property: 'timeOfDay',
+          operator: '>=',
+          operand: 6
+        },
+        {
+          property: 'peopleCount',
+          operator: '>=',
+          operand: 2
+        }
+      ]
     }
-  ]
+  }
 }
 ```
 
 A `decision` for a numerical output type would look like:
 
 ```js
-  decision: {
-    lightbulbIntensity: 10.5,
-    standard_deviation: 1.25
+  output: {
+    lightbulbIntensity: {
+      predicted_value: 10.5,
+      standard_deviation: 1.25,
+      confidence: ...,
+      decision_rules: [ ... ]
+    }
   }
 ```
 
@@ -936,9 +943,12 @@ A `decision` in a case where the tree cannot make a prediction:
 
 ```js
   decision: {
-    lightbulbState: null, // No decision
+    lightbulbState: {
+      predicted_value: null, // No decision
+      confidence: 0, // Zero confidence if the decision is null
+      decision_rules: [ ... ]
+    }
   },
-  confidence: 0 // Zero confidence if the decision is null
 ```
 
 ### Logging ###

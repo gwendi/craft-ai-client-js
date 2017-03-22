@@ -30,8 +30,9 @@ describe('client.getAgentDecisionTree(<agentId>, <timestamp>)', function() {
     return client.getAgentDecisionTree(agent.id, CONFIGURATION_1_OPERATIONS_1_TO + 200)
       .then(treeJson => {
         expect(treeJson).to.be.ok;
-        const { tree, configuration } = parse(treeJson);
-        expect(tree).to.be.ok;
+        const { trees, configuration, _version } = parse(treeJson);
+        expect(trees).to.be.ok;
+        expect(_version).to.be.ok;
         expect(configuration).to.be.deep.equal(configuration);
       });
   });
