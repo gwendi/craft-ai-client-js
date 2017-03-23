@@ -2,7 +2,7 @@ import _ from 'lodash';
 import inherits from 'inherits';
 
 function CraftAiError(message, extraProperties) {
-  if (typeof Error.captureStackTrace === 'function') {
+  if (_.isFunction(Error.captureStackTrace)) {
     Error.captureStackTrace(this, this.constructor);
   } else {
     this.stack = (new Error()).stack || 'Cannot get a stacktrace, browser is too old';
@@ -22,10 +22,10 @@ inherits(CraftAiError, Error);
 
 function createCustomError(name, message) {
   function CraftAiCustomError() {
-    var args = Array.prototype.slice.call(arguments, 0);
+    let args = Array.prototype.slice.call(arguments, 0);
 
     // custom message not set, use default
-    if (typeof args[0] !== 'string') {
+    if (!_.isString(args[0])) {
       args.unshift(message);
     }
 

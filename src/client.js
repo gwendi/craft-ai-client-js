@@ -1,5 +1,5 @@
-import _ from 'lodash';
 import * as errors from './errors';
+import _ from 'lodash';
 import Debug from 'debug';
 import decide from './decide';
 import DEFAULTS from './defaults';
@@ -22,7 +22,7 @@ export default function createClient(cfg) {
     throw new errors.CraftAiBadRequestError('Bad Request, unable to create a client with no or invalid project provided.');
   }
   else {
-    const splittedProject = cfg.project.split('/');
+    const splittedProject = _.split(cfg.project, '/');
     if (splittedProject.length >= 2) {
       cfg.owner = splittedProject[0];
       cfg.project = splittedProject[1];
@@ -48,20 +48,20 @@ export default function createClient(cfg) {
     else {
       // Something to flush, in chunks !
       return _(operationsToFlush)
-      .orderBy('timestamp')
-      .chunk(cfg.operationsChunksSize)
-      .reduce((p, chunk) => p.then(
-          () => request({
+        .orderBy('timestamp')
+        .chunk(cfg.operationsChunksSize)
+        .reduce(
+          (p, chunk) => p.then(() => request({
             method: 'POST',
             path: '/agents/' + agentId + '/context',
             body: chunk
-          }, cfg)
-        ),
-        new Promise(resolve => resolve())
-      )
-      .then(() => {
-        debug(`Successfully added ${operationsToFlush.length} operations to the agent ${cfg.owner}/${cfg.project}/${agentId} context.`);
-      });
+          }, cfg)),
+          new Promise(resolve => resolve())
+        )
+        .then(() => {
+          debug(`Successfully added ${operationsToFlush.length} operations to the agent ${cfg.owner}/${cfg.project}/${agentId} context.`);
+          return;
+        });
     }
   };
 
@@ -110,10 +110,10 @@ export default function createClient(cfg) {
           configuration: configuration
         }
       }, this)
-      .then(agent => {
-        debug(`Agent '${agent.id}' created.`);
-        return agent;
-      });
+        .then(agent => {
+          debug(`Agent '${agent.id}' created.`);
+          return agent;
+        });
     },
     getAgent: function(agentId) {
       if (_.isUndefined(agentId)) {
@@ -121,17 +121,17 @@ export default function createClient(cfg) {
       }
 
       return flushAgentContextOperations(agentId)
-      .then(() => request({
-        method: 'GET',
-        path: '/agents/' + agentId
-      }, this));
+        .then(() => request({
+          method: 'GET',
+          path: '/agents/' + agentId
+        }, this));
     },
     listAgents: function(agentId) {
       return request({
-        method: 'GET',
-        path: '/agents'
-      }, this)
-      .then(result => result.agentsList);
+          method: 'GET',
+          path: '/agents'
+        }, this)
+        .then(result => result.agentsList);
     },
     deleteAgent: function(agentId) {
       if (_.isUndefined(agentId)) {
@@ -141,13 +141,13 @@ export default function createClient(cfg) {
       agentsOperations[agentId] = [];
 
       return request({
-        method: 'DELETE',
-        path: '/agents/' + agentId
-      }, this)
-      .then(agent => {
-        debug(`Agent '${agentId}' deleted`);
-        return agent;
-      });
+          method: 'DELETE',
+          path: '/agents/' + agentId
+        }, this)
+        .then(agent => {
+          debug(`Agent '${agentId}' deleted`);
+          return agent;
+        });
     },
     destroyAgent: function(agentId) {
       if (_.isUndefined(agentId)) {
@@ -157,14 +157,14 @@ export default function createClient(cfg) {
       agentsOperations[agentId] = [];
 
       return request({
-        method: 'DELETE',
-        path: '/agents/' + agentId
-      }, this)
-      .then(agent => {
-        debug('This function is deprecated. It will be removed in the future, use \'deleteAgent\' instead.');
-        debug(`Agent '${agentId}' deleted`);
-        return agent;
-      });
+          method: 'DELETE',
+          path: '/agents/' + agentId
+        }, this)
+        .then(agent => {
+          debug('This function is deprecated. It will be removed in the future, use \'deleteAgent\' instead.');
+          debug(`Agent '${agentId}' deleted`);
+          return agent;
+        });
     },
     getAgentContext: function(agentId, t = undefined) {
       if (_.isUndefined(agentId)) {
@@ -176,13 +176,13 @@ export default function createClient(cfg) {
       }
 
       return flushAgentContextOperations(agentId)
-      .then(() => request({
-        method: 'GET',
-        path: '/agents/' + agentId + '/context/state',
-        query: {
-          t: posixTimestamp
-        }
-      }, this));
+        .then(() => request({
+          method: 'GET',
+          path: '/agents/' + agentId + '/context/state',
+          query: {
+            t: posixTimestamp
+          }
+        }, this));
     },
     addAgentContextOperations: function(agentId, operations, flush = false) {
       if (_.isUndefined(agentId)) {
@@ -198,7 +198,7 @@ export default function createClient(cfg) {
       }
 
       agentsOperations[agentId] = (agentsOperations[agentId] || []).concat(
-        _.map(operations, o => _.extend(o, {
+        _.map(operations, o => _.assign(o, {
           timestamp: Time(o.timestamp).timestamp
         }))
       );
@@ -216,10 +216,10 @@ export default function createClient(cfg) {
       }
 
       return flushAgentContextOperations(agentId)
-      .then(() => request({
-        method: 'GET',
-        path: '/agents/' + agentId + '/context'
-      }, this));
+        .then(() => request({
+          method: 'GET',
+          path: '/agents/' + agentId + '/context'
+        }, this));
     },
     getAgentInspectorUrl: function(agentId, t = undefined) {
       if (_.isUndefined(agentId)) {
@@ -246,13 +246,13 @@ export default function createClient(cfg) {
       }
 
       return flushAgentContextOperations(agentId)
-      .then(() => request({
-        method: 'GET',
-        path: '/agents/' + agentId + '/decision/tree',
-        query: {
-          t: posixTimestamp
-        }
-      }, this));
+        .then(() => request({
+          method: 'GET',
+          path: '/agents/' + agentId + '/decision/tree',
+          query: {
+            t: posixTimestamp
+          }
+        }, this));
     },
     computeAgentDecision: function(agentId, t, ...contexts) {
       if (_.isUndefined(agentId)) {
@@ -267,18 +267,18 @@ export default function createClient(cfg) {
       }
 
       return flushAgentContextOperations(agentId)
-      .then(() => request({
-        method: 'GET',
-        path: '/agents/' + agentId + '/decision/tree',
-        query: {
-          t: posixTimestamp
-        }
-      }, this))
-      .then(tree => {
-        let decision = decide(tree, ...contexts);
-        decision.timestamp = posixTimestamp;
-        return decision;
-      });
+        .then(() => request({
+          method: 'GET',
+          path: '/agents/' + agentId + '/decision/tree',
+          query: {
+            t: posixTimestamp
+          }
+        }, this))
+        .then(tree => {
+          let decision = decide(tree, ...contexts);
+          decision.timestamp = posixTimestamp;
+          return decision;
+        });
     }
   });
 

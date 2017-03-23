@@ -1,6 +1,6 @@
 import _ from 'lodash';
-import parse from './parse';
 import context from './context';
+import parse from './parse';
 
 let operators = {
   'is'    : (context, value) => context === value,
@@ -73,7 +73,7 @@ function decideRecursion(node, context) {
 
 export default function decide( json, ...args ) {
   const { _version, trees, configuration } = parse(json);
-  const ctx = configuration ? context(configuration, ...args) : _.extend({}, ...args);
+  const ctx = configuration ? context(configuration, ...args) : _.assign({}, ...args);
   return {
     _version: _version,
     context: ctx,

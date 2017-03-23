@@ -1,5 +1,5 @@
-import _ from 'lodash';
 import * as errors from './errors';
+import _ from 'lodash';
 import Debug from 'debug';
 import fetch from 'isomorphic-fetch';
 import syncRequest from 'sync-request';

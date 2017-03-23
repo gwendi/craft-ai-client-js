@@ -1,5 +1,5 @@
-import moment from 'moment';
 import _ from 'lodash';
+import moment from 'moment';
 
 // From 'moment/src/lib/parse/regex.js'
 const OFFSET_REGEX = /Z|[+-]\d\d:?\d\d/gi; // +00:00 -00:00 +0000 -0000 or Z
@@ -45,7 +45,7 @@ export default function Time(t = undefined, tz = undefined) {
 
   const minuteOffset =  m.utcOffset();
 
-  return _.extend(this, {
+  return _.assign(this, {
     timestamp: m.unix(),
     timezone: tzFromOffset(minuteOffset),
     time_of_day: m.hour() + m.minute() / 60 + m.second() / 3600,

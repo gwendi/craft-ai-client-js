@@ -34,6 +34,7 @@ describe('client.getAgentDecisionTree(<agentId>, <timestamp>)', function() {
         expect(trees).to.be.ok;
         expect(_version).to.be.ok;
         expect(configuration).to.be.deep.equal(configuration);
+        return;
       });
   });
 });

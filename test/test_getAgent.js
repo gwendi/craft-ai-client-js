@@ -16,6 +16,7 @@ describe('client.getAgent(<agentId>)', function() {
       .then(createdAgent => {
         expect(createdAgent).to.be.ok;
         agent = createdAgent;
+        return;
       });
   });
   afterEach(function() {
@@ -26,6 +27,7 @@ describe('client.getAgent(<agentId>)', function() {
       .then(retrievedAgent => {
         expect(retrievedAgent.firstTimestamp).to.be.undefined;
         expect(retrievedAgent.lastTimestamp).to.be.undefined;
+        return;
       });
   });
   it('should fail on non-existing agent', function() {

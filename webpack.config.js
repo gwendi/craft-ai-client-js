@@ -1,6 +1,6 @@
-var webpack = require('webpack');
+let webpack = require('webpack');
 
-var configuration = {
+let configuration = {
   entry: './src/bundle.js',
   output: {
     path: __dirname + '/dist',

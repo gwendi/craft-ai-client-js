@@ -1,3 +1,28 @@
 {
-  "extends": "craft-ai"
+  "plugins": [
+    "lodash",
+    "promise",
+    "import"
+  ],
+  "extends": [
+    "craft-ai",
+    "plugin:lodash/canonical",
+    "plugin:import/errors"
+  ],
+  "rules": {
+    "no-var": "error",
+    "lodash/chaining": ["error", "always"],
+    "promise/always-return": "error",
+    "promise/no-return-wrap": "error",
+    "promise/param-names": "error",
+    "promise/catch-or-return": "error",
+    "indent": ["error", 2,
+      {
+        "MemberExpression": 1,
+        "SwitchCase": 1,
+        "ArrayExpression": "first",
+        "ObjectExpression": "first"
+      }
+    ]
+  }
 }

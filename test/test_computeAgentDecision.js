@@ -33,6 +33,7 @@ describe('client.computeAgentDecision(<agentId>, <timestamp>, <context>)', funct
       .then(decision => {
         expect(decision).to.be.ok;
         expect(decision.output.lightbulbColor.predicted_value).to.be.equal('black');
+        return;
       });
   });
   it('should succeed when using valid parameters (context override)', function() {
@@ -45,6 +46,7 @@ describe('client.computeAgentDecision(<agentId>, <timestamp>, <context>)', funct
       .then(decision => {
         expect(decision).to.be.ok;
         expect(decision.output.lightbulbColor.predicted_value).to.be.equal('black');
+        return;
       });
   });
 });

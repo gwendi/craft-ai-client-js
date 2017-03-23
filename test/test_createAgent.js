@@ -31,7 +31,7 @@ describe('client.createAgent(<configuration>, [id])', function() {
         return client.deleteAgent(agent.id);
       })
       .catch(err => {
-        client.deleteAgent(agentId) // The test might fail due to duplicate id, let's make sure it doesn't fail twice.
+        return client.deleteAgent(agentId) // The test might fail due to duplicate id, let's make sure it doesn't fail twice.
           .then(() => {
             throw err;
           });

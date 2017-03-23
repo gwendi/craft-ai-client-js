@@ -12,12 +12,14 @@ describe('client.getAgentInspectorUrl(<agentId>, <timestamp>)', function() {
     return client.getAgentInspectorUrl(agentId, timestamp)
       .then(publicInspectorUrl => {
         expect(publicInspectorUrl, `${client.cfg.url}/public/inspector?owner=${client.cfg.owner}&agent=${agentId}&timestamp=${timestamp}&token=${client.cfg.token}`);
+        return;
       });
   });
   it('should return the public inspector url, when no timestamp is specified', function() {
     return client.getAgentInspectorUrl(agentId)
       .then(publicInspectorUrl => {
         expect(publicInspectorUrl, `${client.cfg.url}/public/inspector?owner=${client.cfg.owner}&agent=${agentId}&token=${client.cfg.token}`);
+        return;
       });
   });
 });

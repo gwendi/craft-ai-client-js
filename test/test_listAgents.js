@@ -22,6 +22,7 @@ describe('client.listAgents()', function() {
         expect(retrievedAgentIds).to.include(agentsId[0]);
         expect(retrievedAgentIds).to.include(agentsId[1]);
         expect(retrievedAgentIds).to.include(agentsId[2]);
+        return;
       });
   });
 });
