@@ -1,6 +1,7 @@
 import _ from 'lodash';
 import parse from './parse';
 import context from './context';
+import { CraftAiDecisionError } from './errors';
 
 let operators = {
   'is'    : (context, value) => context === value,
@@ -43,8 +44,13 @@ function decideRecursion(node, context) {
     (child) => {
       const decision_rule = child.decision_rule;
       const property = decision_rule.property;
-      if (_.isUndefined(context[property])) {
-        throw new Error( `Unable to take decision, property "${property}" is not defined in the given context.` );
+      if ( _.isUndefined(context[property]) ) {
+        throw new CraftAiDecisionError({
+          message: `Unable to take decision, property '${property}' is missing from the given context.`,
+          metadata: {
+            expectedProperties: _.keys(context)
+          }
+        });
       }
 
       return operators[decision_rule.operator](context[property], decision_rule.operand);
@@ -52,7 +58,16 @@ function decideRecursion(node, context) {
   );
 
   if (_.isUndefined(matchingChild)) {
-    throw new Error( 'Unable to take decision, no matching child found.' );
+    const operandList = _.uniq(_.map(_.values(node.children), child => child.decision_rule.operand));
+    const property = _.head(node.children).decision_rule.property;
+    throw new CraftAiDecisionError({
+      message: `Unable to take decision: '${context[property]}' not found amongst values for the '${property}' property.`,
+      metadata: {
+        property: property,
+        value: context[property],
+        expectedValues: operandList
+      }
+    });
   }
 
   // matching child found: recurse !
