@@ -18,4 +18,4 @@ global.CRAFT_CFG = CRAFT_CFG;
 global.debug = Debug('craft-ai:client:test');
 global.expect = expect;
 global.IN_BROWSER = false;
-global.RUN_ID = process.env.TRAVIS_BUILD_ID || 'local';
+global.RUN_ID = process.env.TRAVIS_JOB_ID || 'local';
