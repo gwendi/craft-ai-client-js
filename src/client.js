@@ -3,6 +3,7 @@ import * as errors from './errors';
 import Debug from 'debug';
 import decide from './decide';
 import DEFAULTS from './defaults';
+import jwtDecode from 'jwt-decode';
 import request from './request';
 import Time from './time';
 
@@ -14,6 +15,13 @@ export default function createClient(cfg) {
   // Initialization check
   if (!_.has(cfg, 'token') || !_.isString(cfg.token)) {
     throw new errors.CraftAiBadRequestError('Bad Request, unable to create a client with no or invalid token provided.');
+  }
+  else {
+    const { owner, project, platform } = jwtDecode(cfg.token);
+
+    cfg.owner = owner;
+    cfg.project = project;
+    cfg.url = platform;
   }
   if (!_.has(cfg, 'url') || !_.isString(cfg.url)) {
     throw new errors.CraftAiBadRequestError('Bad Request, unable to create a client with no or invalid url provided.');
@@ -31,6 +39,8 @@ export default function createClient(cfg) {
   if (!_.has(cfg, 'owner') || !_.isString(cfg.owner)) {
     throw new errors.CraftAiBadRequestError('Bad Request, unable to create a client with no or invalid owner provided.');
   }
+
+  debug(`Creating a client instance for project '${cfg.owner}/${cfg.project}' on '${cfg.url}'.`);
 
   // The cache of operations to send.
   let agentsOperations = {};
