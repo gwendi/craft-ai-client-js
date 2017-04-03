@@ -249,7 +249,6 @@ describe('client.addAgentContextOperations(<agentId>, <operations>)', function()
       });
   });
   it('should succeed with a very large number of simultaneous calls', function() {
-    this.timeout(10000);
     return Promise.all(
       _(CONFIGURATION_1_OPERATIONS_2)
         .chunk(5)
@@ -264,7 +263,6 @@ describe('client.addAgentContextOperations(<agentId>, <operations>)', function()
       });
   });
   it('should succeed with a very large payload', function() {
-    this.timeout(10000);
     return client.addAgentContextOperations(agents[0].id, CONFIGURATION_1_OPERATIONS_2)
     .then(() => {
       return client.getAgentContextOperations(agents[0].id);

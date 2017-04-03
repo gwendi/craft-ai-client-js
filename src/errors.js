@@ -50,7 +50,7 @@ let CraftAiNetworkError = createCustomError(
 
 let CraftAiCredentialsError = createCustomError(
   'CraftAiCredentialsError',
-  'Credentials error, make sure the given appId/appSecret are valid'
+  'Credentials error, make sure the given token is valid'
 );
 
 let CraftAiInternalError = createCustomError(
