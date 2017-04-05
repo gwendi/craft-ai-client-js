@@ -240,19 +240,38 @@ export default function createClient(tokenOrCfg) {
       }, this));
     },
     getAgentInspectorUrl: function(agentId, t = undefined) {
-      if (_.isUndefined(agentId)) {
-        return Promise.reject(new errors.CraftAiBadRequestError('Bad Request, unable to get the agent public inspector url beause agentId isn\'t provided.'));
-      }
-      if (_.isUndefined(t)) {
-        return Promise.resolve(`${cfg.url}/public/inspector?token=${cfg.token}&owner=${cfg.owner}&project=${cfg.project}&agent=${agentId}`);
-      }
-      else {
-        let posixTimestamp = Time(t).timestamp;
-        if (_.isUndefined(posixTimestamp)) {
-          return Promise.reject(new errors.CraftAiBadRequestError('Bad Request, unable to get the agent public inspector url with no or invalid timestamp provided.'));
+      console.warn('This function is deprecated. It will be removed in the future, use \'sharedAgentInspectorUrl\' instead.');
+      return this.sharedAgentInspectorUrl(agentId, t);
+    },
+    sharedAgentInspectorUrl: function(agentId, t = undefined) {
+      return request({
+        method: 'GET',
+        path: `/agents/${agentId}/shared` 
+      }, this)
+      .then((url) => {
+        if (_.isUndefined(t)) {
+          return url.shortUrl;
         }
-        return Promise.resolve(`${cfg.url}/public/inspector?token=${cfg.token}&owner=${cfg.owner}&project=${cfg.project}&agent=${agentId}&timestamp=${posixTimestamp}`);
-      }
+        else {
+          let posixTimestamp = Time(t).timestamp;
+          if (_.isUndefined(posixTimestamp)) {
+            return Promise.reject(new errors.CraftAiBadRequestError('Bad Request, unable to get the shared agent inspector url with invalid timestamp provided.'));
+          }
+          else {
+            return `${url.shortUrl}?t=${t}`;
+          }
+        }
+      });
+    },
+    deleteSharedAgentInspectorUrl: function(agentId) {
+      return request({
+        method: 'DELETE',
+        path: `/agents/${agentId}/shared` 
+      }, this)
+      .then(() => {
+        debug(`Delete shared inspector link for agent "${agentId}".`);
+        return true;
+      });
     },
     getAgentDecisionTree: function(agentId, t = undefined) {
       if (_.isUndefined(agentId)) {
