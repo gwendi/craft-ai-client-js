@@ -2,16 +2,18 @@ import craftai from '../src';
 
 import CONFIGURATION_1 from './data/configuration_1.json';
 
-describe('client.getAgentInspectorUrl(<agentId>, <timestamp>)', function() {
+describe('client.sharedAgentInspectorUrl(<agentId>, <timestamp>)', function() {
   let client;
   const agentId = 'get_public_url_' + RUN_ID;
+
   before(function() {
     client = craftai(CRAFT_CFG);
     expect(client).to.be.ok;
     return client.deleteAgent(agentId)
       .then(() => client.createAgent(CONFIGURATION_1, agentId));
   });
-  it('should return the public inspector url', function() {
+
+  it('should return a shared inspector url', function() {
     const timestamp = 1234567890987;
     return client.sharedAgentInspectorUrl(agentId, timestamp)
       .then(publicInspectorUrl => {
@@ -25,7 +27,8 @@ describe('client.getAgentInspectorUrl(<agentId>, <timestamp>)', function() {
           });
       });
   });
-  it('should return the a new public inspector url, after the deletion of the previous one', function() {
+
+  it('should return a new shared inspector url, after the deletion of the previous one', function() {
     return client.getAgentInspectorUrl(agentId)
       .then(publicInspectorUrl => {
         expect(publicInspectorUrl).to.not.be.equal('');
@@ -38,9 +41,10 @@ describe('client.getAgentInspectorUrl(<agentId>, <timestamp>)', function() {
         });
       });
   });
-  it('should return the public inspector url, when no timestamp is specified', function() {
+
+  it('should return a shared inspector url, when no timestamp is specified', function() {
     const timestamp = 1234567890987;
-    return client.getAgentInspectorUrl(agentId)
+    return client.sharedAgentInspectorUrl(agentId)
       .then(publicInspectorUrl => {
         expect(publicInspectorUrl).to.not.be.equal('');
         const splittedPublicInspectorUrl = publicInspectorUrl.split('?');
@@ -48,12 +52,24 @@ describe('client.getAgentInspectorUrl(<agentId>, <timestamp>)', function() {
         return client.getAgentInspectorUrl(agentId)
           .then((publicInspectorUrlDeprecated) => {
             expect(publicInspectorUrlDeprecated, publicInspectorUrl);
-            return client.getAgentInspectorUrl(agentId, timestamp);
+            return client.sharedAgentInspectorUrl(agentId, timestamp);
           })
           .then((publicInspectorUrl2) => {
             expect(publicInspectorUrl).to.not.be.equal(publicInspectorUrl2);
             expect(publicInspectorUrl, publicInspectorUrl2.split('?')[0]);
           });
+      });
+  });
+
+  it('should raise and error when timestamp is invalid', function() {
+    return client.sharedAgentInspectorUrl(agentId, 'toto')
+      .then(res => {
+        console.log('res', res);
+        expect(res).to.be.null;
+      })
+      .catch((err) => {
+        expect(err.name).to.be.equal('CraftAiTimeError');
+        expect(err.message).to.be.equal('Time error, given "toto" is invalid.');
       });
   });
 });

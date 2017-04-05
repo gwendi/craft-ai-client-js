@@ -253,12 +253,12 @@ export default function createClient(tokenOrCfg) {
           return url.shortUrl;
         }
         else {
-          let posixTimestamp = Time(t).timestamp;
-          if (_.isUndefined(posixTimestamp)) {
-            return Promise.reject(new errors.CraftAiBadRequestError('Bad Request, unable to get the shared agent inspector url with invalid timestamp provided.'));
+          try {
+            let posixTimestamp = Time(t).timestamp;
+            return `${url.shortUrl}?t=${posixTimestamp}`;
           }
-          else {
-            return `${url.shortUrl}?t=${t}`;
+          catch (err) {
+            throw err;
           }
         }
       });
