@@ -179,7 +179,7 @@ export default function createClient(tokenOrCfg) {
         path: '/agents/' + agentId
       }, this)
       .then(agent => {
-        debug('This function is deprecated. It will be removed in the future, use \'deleteAgent\' instead.');
+        console.warn('This function is deprecated. It will be removed in the future, use \'deleteAgent\' instead.');
         debug(`Agent '${agentId}' deleted`);
         return agent;
       });
