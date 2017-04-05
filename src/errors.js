@@ -68,6 +68,11 @@ let CraftAiDecisionError = createCustomError(
   'Error while taking a decision, see err.metadata for details'
 );
 
+let CraftAiTimeError = createCustomError(
+  'CraftAiTimeError',
+  'Time error, see err.more for details'
+);
+
 export {
   CraftAiBadRequestError,
   CraftAiCredentialsError,
@@ -75,5 +80,6 @@ export {
   CraftAiError,
   CraftAiInternalError,
   CraftAiNetworkError,
+  CraftAiTimeError,
   CraftAiUnknownError
 };
