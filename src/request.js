@@ -1,5 +1,11 @@
 import _ from 'lodash';
-import * as errors from './errors';
+import {
+  CraftAiBadRequestError,
+  CraftAiCredentialsError,
+  CraftAiInternalError,
+  CraftAiNetworkError,
+  CraftAiUnknownError
+} from './errors';
 import Debug from 'debug';
 import fetch from 'isomorphic-fetch';
 import syncRequest from 'sync-request';
@@ -13,7 +19,7 @@ function parseBody(req, resBody) {
   }
   catch (err) {
     debug(`Invalid response format from ${req.method} ${req.path}: ${resBody}`, err);
-    throw new errors.CraftAiInternalError(
+    throw new CraftAiInternalError(
       'Internal Error, the craft ai server responded in an invalid format.', {
         request: req
       }
@@ -30,7 +36,7 @@ function parseBody(req, resBody) {
   }
   catch (err) {
     debug(`Invalid json response from ${req.method} ${req.path}: ${resBody}`, err);
-    throw new errors.CraftAiInternalError(
+    throw new CraftAiInternalError(
       'Internal Error, the craft ai server responded an invalid json document.', {
         more: resBodyUtf8,
         request: req
@@ -48,33 +54,33 @@ function parseResponse(req, resStatus, resBody) {
       return parseBody(req, resBody);
     case 401:
     case 403:
-      throw new errors.CraftAiCredentialsError({
+      throw new CraftAiCredentialsError({
         message: parseBody(req, resBody).message,
         request: req
       });
     case 400:
     case 404:
-      throw new errors.CraftAiBadRequestError({
+      throw new CraftAiBadRequestError({
         message: parseBody(req, resBody).message,
         request: req
       });
     case 413:
-      throw new errors.CraftAiBadRequestError({
+      throw new CraftAiBadRequestError({
         message: 'Given payload is too large',
         request: req
       });
     case 500:
-      throw new errors.CraftAiInternalError(parseBody(req, resBody).message, {
+      throw new CraftAiInternalError(parseBody(req, resBody).message, {
         request: req
       });
     case 504:
-      throw new errors.CraftAiInternalError({
+      throw new CraftAiInternalError({
         message: 'Response has timed out',
         request: req,
         status: resStatus
       });
     default:
-      throw new errors.CraftAiUnknownError({
+      throw new CraftAiUnknownError({
         more: parseBody(req, resBody).message,
         request: req,
         status: resStatus
@@ -104,13 +110,13 @@ export default function request(req, cfg) {
 
   if (req.asynchronous) {
     return fetch(req.url, req)
-      .catch(err => Promise.reject(new errors.CraftAiNetworkError({
+      .catch(err => Promise.reject(new CraftAiNetworkError({
         more: err.message
       })))
       .then(res => res.text()
         .catch(err => {
           debug(`Invalid response from ${req.method} ${req.path}`, err);
-          return Promise.reject(new errors.CraftAiInternalError(
+          return Promise.reject(new CraftAiInternalError(
             'Internal Error, the craft ai server responded an invalid response, see err.more for details.', {
               request: req,
               more: err.message
