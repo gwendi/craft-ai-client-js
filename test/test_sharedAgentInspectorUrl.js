@@ -13,6 +13,10 @@ describe('client.sharedAgentInspectorUrl(<agentId>, <timestamp>)', function() {
       .then(() => client.createAgent(CONFIGURATION_1, agentId));
   });
 
+  after(function() {
+    client.deleteAgent(agentId);
+  });
+
   it('should return a shared inspector url', function() {
     const timestamp = 1234567890987;
     return client.sharedAgentInspectorUrl(agentId, timestamp)
