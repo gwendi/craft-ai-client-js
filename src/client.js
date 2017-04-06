@@ -241,9 +241,9 @@ export default function createClient(tokenOrCfg) {
     },
     getAgentInspectorUrl: function(agentId, t = undefined) {
       console.warn('This function is deprecated. It will be removed in the future, use \'sharedAgentInspectorUrl\' instead.');
-      return this.sharedAgentInspectorUrl(agentId, t);
+      return this.getSharedAgentInspectorUrl(agentId, t);
     },
-    sharedAgentInspectorUrl: function(agentId, t = undefined) {
+    getSharedAgentInspectorUrl: function(agentId, t = undefined) {
       return request({
         method: 'GET',
         path: `/agents/${agentId}/shared` 
@@ -253,13 +253,8 @@ export default function createClient(tokenOrCfg) {
           return url.shortUrl;
         }
         else {
-          try {
-            let posixTimestamp = Time(t).timestamp;
-            return `${url.shortUrl}?t=${posixTimestamp}`;
-          }
-          catch (err) {
-            throw err;
-          }
+          let posixTimestamp = Time(t).timestamp;
+          return `${url.shortUrl}?t=${posixTimestamp}`;
         }
       });
     },

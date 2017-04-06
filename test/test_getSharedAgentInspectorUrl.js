@@ -19,7 +19,7 @@ describe('client.sharedAgentInspectorUrl(<agentId>, <timestamp>)', function() {
 
   it('should return a shared inspector url', function() {
     const timestamp = 1234567890987;
-    return client.sharedAgentInspectorUrl(agentId, timestamp)
+    return client.getSharedAgentInspectorUrl(agentId, timestamp)
       .then(publicInspectorUrl => {
         expect(publicInspectorUrl).to.not.be.equal('');
         const splittedPublicInspectorUrl = publicInspectorUrl.split('?');
@@ -33,13 +33,13 @@ describe('client.sharedAgentInspectorUrl(<agentId>, <timestamp>)', function() {
   });
 
   it('should return a new shared inspector url, after the deletion of the previous one', function() {
-    return client.getAgentInspectorUrl(agentId)
+    return client.getSharedAgentInspectorUrl(agentId)
       .then(publicInspectorUrl => {
         expect(publicInspectorUrl).to.not.be.equal('');
         const splittedPublicInspectorUrl = publicInspectorUrl.split('?');
         expect(splittedPublicInspectorUrl.length).to.be.equal(1);
         return client.deleteSharedAgentInspectorUrl(agentId)
-        .then(() => client.sharedAgentInspectorUrl(agentId))
+        .then(() => client.getSharedAgentInspectorUrl(agentId))
         .then((publicInspectorUrl2) => {
           expect(publicInspectorUrl2).to.not.be.equal(publicInspectorUrl);
         });
@@ -48,7 +48,7 @@ describe('client.sharedAgentInspectorUrl(<agentId>, <timestamp>)', function() {
 
   it('should return a shared inspector url, when no timestamp is specified', function() {
     const timestamp = 1234567890987;
-    return client.sharedAgentInspectorUrl(agentId)
+    return client.getSharedAgentInspectorUrl(agentId)
       .then(publicInspectorUrl => {
         expect(publicInspectorUrl).to.not.be.equal('');
         const splittedPublicInspectorUrl = publicInspectorUrl.split('?');
@@ -56,7 +56,7 @@ describe('client.sharedAgentInspectorUrl(<agentId>, <timestamp>)', function() {
         return client.getAgentInspectorUrl(agentId)
           .then((publicInspectorUrlDeprecated) => {
             expect(publicInspectorUrlDeprecated, publicInspectorUrl);
-            return client.sharedAgentInspectorUrl(agentId, timestamp);
+            return client.getSharedAgentInspectorUrl(agentId, timestamp);
           })
           .then((publicInspectorUrl2) => {
             expect(publicInspectorUrl).to.not.be.equal(publicInspectorUrl2);
@@ -66,9 +66,8 @@ describe('client.sharedAgentInspectorUrl(<agentId>, <timestamp>)', function() {
   });
 
   it('should raise and error when timestamp is invalid', function() {
-    return client.sharedAgentInspectorUrl(agentId, 'toto')
+    return client.getSharedAgentInspectorUrl(agentId, 'toto')
       .then(res => {
-        console.log('res', res);
         expect(res).to.be.null;
       })
       .catch((err) => {
