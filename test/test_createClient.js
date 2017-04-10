@@ -1,6 +1,6 @@
 import craftai, { errors } from '../src';
 
-describe.only('craftai(<token_or_cfg>)', function() {
+describe('craftai(<token_or_cfg>)', function() {
   it('should create a valid client given a valid configuration', function() {
     const client = craftai(CRAFT_CFG);
     expect(client.cfg.url).to.be.defined;
