@@ -1,5 +1,6 @@
-import moment from 'moment';
 import _ from 'lodash';
+import moment from 'moment';
+import { CraftAiTimeError } from './errors';
 
 // From 'moment/src/lib/parse/regex.js'
 const OFFSET_REGEX = /Z|[+-]\d\d:?\d\d/gi; // +00:00 -00:00 +0000 -0000 or Z
@@ -17,7 +18,9 @@ function tzFromOffset(offset) {
 
 export default function Time(t = undefined, tz = undefined) {
   // Make sure it works with or without new.
-  if (!(this instanceof Time)) { return new Time(t, tz); }
+  if (!(this instanceof Time)) {
+    return new Time(t, tz);
+  }
 
   let m;
   if (t instanceof Time) {
@@ -33,9 +36,15 @@ export default function Time(t = undefined, tz = undefined) {
     // String with a explicit offset
     m = moment.parseZone(t);
   }
+  else if (_.isUndefined(t)) {
+    m = moment();
+  }
   else {
     // Any other format, should be parseable by moment
-    m = moment(t);
+    m = moment(new Date(t));
+    if (!m.isValid()) {
+      throw new CraftAiTimeError(`Time error, given "${t}" is invalid.`);
+    }
   }
 
   if (tz) {
