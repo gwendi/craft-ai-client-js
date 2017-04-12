@@ -57,7 +57,7 @@ function decideRecursion(node, context) {
       const decision_rule = child.decision_rule;
       const property = decision_rule.property;
       if ( _.isUndefined(context[property]) ) {
-        // Should not happen 
+        // Should not happen
         throw new CraftAiUnknownError({
           message: `Unable to take decision, property '${property}' is missing from the given context.`
         });
@@ -113,7 +113,7 @@ function checkContext(configuration) {
 
   return context => {
     const { badProperties, missingProperties } = _.reduce(
-      validators, 
+      validators,
       ({ badProperties, missingProperties }, { property, type, validator }) => {
         const value = context[property];
         if (value === undefined) {
@@ -123,14 +123,14 @@ function checkContext(configuration) {
           badProperties.push({ property, type, value });
         }
         return { badProperties, missingProperties };
-      }, 
+      },
       { badProperties: [], missingProperties:[] }
     );
 
     if (missingProperties.length || badProperties.length) {
       const messages = _.concat(
-        _.map(missingProperties, property => `property '${property}' is not defined`),
-        _.map(badProperties, ({ property, type, value }) => `property '${property}' value, '${value}', is not valid for type '${type}'`)
+        _.map(missingProperties, property => `expected property '${property}' is not defined`),
+        _.map(badProperties, ({ property, type, value }) => `'${value}' is not a valid value for property '${property}' of type '${type}'`)
       );
       throw new CraftAiDecisionError({
         message: `Unable to take decision, the given context is not valid: ${messages.join(', ')}.`,
