@@ -23,9 +23,10 @@ export default function createClient(tokenOrCfg) {
   try {
     const { owner, project, platform } = jwtDecode(cfg.token);
 
-    cfg.owner = owner;
-    cfg.project = project;
-    cfg.url = platform;
+    // Keep the provided values
+    cfg.owner = cfg.owner || owner;
+    cfg.project = cfg.project || project;
+    cfg.url = cfg.url || platform;
   }
   catch (e) {
     throw new errors.CraftAiCredentialsError();
