@@ -43,7 +43,7 @@ describe('errors', function() {
       expect(e).to.be.an.instanceof(errors.CraftAiError);
     });
     it('has a default "message" property', function() {
-      expect(e).to.have.property('message', 'Credentials error, make sure the given appId/appSecret are valid');
+      expect(e).to.have.property('message', 'Credentials error, make sure the given token is valid');
     });
   });
   describe('.CraftAiInternalError', function() {
