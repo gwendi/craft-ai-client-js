@@ -65,7 +65,7 @@ describe('client.sharedAgentInspectorUrl(<agentId>, <timestamp>)', function() {
       });
   });
 
-  it('should raise and error when timestamp is invalid', function() {
+  it('should raise an error when timestamp is invalid', function() {
     return client.getSharedAgentInspectorUrl(agentId, 'toto')
       .then(res => {
         expect(res).to.be.null;
