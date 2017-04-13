@@ -25,7 +25,7 @@
     "craft-ai"
   ],
   "scripts": {
-    "update_readme": "download http://www.craft.ai/content/api/js.md > README.md",
+    "update_readme": "download http://www.craft.ai/content/api/js.md > README.md && git add README.md && git commit -m 'Updated README file'",
     "build": "npm run build_node && npm run build_browser:production && npm run build_browser:dev",
     "build_node": "babel src --out-dir lib",
     "build_browser:production": "NODE_ENV=production webpack",

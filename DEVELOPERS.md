@@ -2,44 +2,70 @@
 
 ## Running the tests locally ##
 
-1. Retrieve your **craft ai** _owner_ and _token_.
-2. On your dev machine, at the root of your clone, create a file named `.env` with the following content
+1. Make sure you have a version of [Node.js](https://nodejs.org) installed (any version >0.12 should work).
+1. Create a test **craft ai** project and retrieve its **write token**.
+2. At the root of your local clone, create a file named `.env` with the following content
 
   ```
-  CRAFT_OWNER=<retrieved_owner>
   CRAFT_TOKEN=<retrieved_token>
   ```
 
-3. Run `npm install` to install dependencies
-4. You can run the following `npm` scripts:
-  - `npm run test_node` launches the tests in a nodejs context,
-  - `npm run dev_browser` launches an auto-reload test server in a browser
-  context at <http://localhost:8080/webpack-dev-server/>,
-  - `npm run lint` checks the coding style.
+3. Install the dependencies.
+
+  ```console
+  $ npm install
+  ```
+
+4. Run the tests!
+
+  ```console
+  $ npm run test
+  ```
+
+5. Additionaly, you can run a test server to run the test in a browser at <http://localhost:8080/webpack-dev-server/>.
+
+  ```console
+  $ npm run dev_browser
+  ```
 
 ## Releasing a new version (needs administrator rights) ##
 
-1. Make sure the build of the master branch is passing
-[![Build](https://img.shields.io/travis/craft-ai/craft-ai-client-js/master.svg?style=flat-square)](https://travis-ci.org/craft-ai/craft-ai-client-js)
-2. Checkout the master branch locally
+1. Make sure the build of the master branch is passing.
 
-  ```sh
-  git fetch
-  git checkout master
-  git reset --hard origin/master
+  [![Build](https://img.shields.io/travis/craft-ai/craft-ai-client-js/master.svg?style=flat-square)](https://travis-ci.org/craft-ai/craft-ai-client-js)
+
+2. Checkout the master branch locally.
+
+  ```console
+  $ git fetch
+  $ git checkout master
+  $ git reset --hard origin/master
   ```
 
-3. Make sure the `README.md` is up to date with the _central_ documentation
+3. Updade the readme from **craft ai** internal _"CMS"_.
 
-  ```sh
-  npm run update_readme
-  git commit -a -m"Update README.md from upstream"
+  ```console
+  $ npm run update_readme
   ```
 
-3. Bump the version and push
+  > This will create a git commit.
 
-  ```sh
-  npm version patch
-  git push origin master
-  git push --tags
+4. Increment the version.
+
+  ```console
+  $ npm version patch
   ```
+
+  `npm version minor` and `npm version major` are also available - see
+  [semver](http://semver.org) for a guideline on when to use which.
+
+  > This will create a git commit and a git tag
+
+5. Push everything
+
+  ```console
+  $ git push origin master
+  $ git push --tags
+  ```
+
+  > This will trigger the publishing of this new version to [npm](https://www.npmjs.com/package/craft-ai) by [travis](https://travis-ci.org/craft-ai/craft-ai-client-js)
