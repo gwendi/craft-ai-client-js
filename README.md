@@ -594,10 +594,12 @@ client.listAgents()
 })
 ```
 
-#### Retrieve the agent inspector URL ####
+#### Create and retrieve shared url ####
+Create and get a shareable url to view an agent tree.
+Only one url can be created at a time.
 
 ```js
-client.getAgentInspectorUrl(
+client.getSharedAgentInspectorUrl(
   'impervious_kraken', // The agent id.
   1464600256 // optional, the timestamp for which you want to inspect the tree.
 )
@@ -608,6 +610,24 @@ client.getAgentInspectorUrl(
   // Catch errors here
 })
 ```
+
+#### Delete shared url ####
+Delete a shareable url.
+The previous url cannot access the agent tree anymore.
+
+```js
+client.deleteSharedAgentInspectorUrl(
+  'impervious_kraken' // The agent id.
+)
+.then(function() {
+  // return nothing
+})
+.catch(function(error) {
+  // Catch errors here
+})
+```
+
+
 
 ### Context ###
 
