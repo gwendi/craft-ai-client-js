@@ -29,7 +29,7 @@ const VALUE_VALIDATOR = {
   enum: value => _.isString(value),
   timezone: value => _.isString(value) && value.match(TIMEZONE_REGEX),
   time_of_day: value => _.isFinite(value) && value >= 0 && value < 24,
-  day_of_week: value => _.isInteger(value)  && value >= 1 && value <= 7,
+  day_of_week: value => _.isInteger(value)  && value >= 0 && value <= 6,
   day_of_month: value => _.isInteger(value)  && value >= 1 && value <= 31,
   month_of_year: value => _.isInteger(value)  && value >= 1 && value <= 12
 };
