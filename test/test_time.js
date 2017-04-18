@@ -170,11 +170,11 @@ describe('Time(...)', function() {
 
     if (moment('2015-03-29T09:15:30.000Z').utcOffset() === 120) {
       // Test depends on locale
-      it('considers sunday to be the seventh day', function() {
+      it('considers sunday to be the sixth day', function() {
         expect(Time(new Date('Sun Mar 29 2015 10:15:30 GMT+0100 (W. Europe Standard Time)'))).to.be.deep.equal({
           utc: '2015-03-29T09:15:30.000Z',
           timestamp: 1427620530,
-          day_of_week: 7,
+          day_of_week: 6,
           time_of_day: 11.258333333333333,
           day_of_month: 29,
           month_of_year: 3,
@@ -241,7 +241,7 @@ describe('Time(...)', function() {
       });
     });
   });
-  
+
   describe('from anythings(...)', function() {
     it('don\'t works with non time string', function() {
       expect(() => Time('toto')).to.throw(CraftAiTimeError);

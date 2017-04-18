@@ -58,9 +58,9 @@ export default function Time(t = undefined, tz = undefined) {
     timestamp: m.unix(),
     timezone: tzFromOffset(minuteOffset),
     time_of_day: m.hour() + m.minute() / 60 + m.second() / 3600,
-    day_of_month: m.date(),           //we want day to be in [1;31]
-    month_of_year: m.month() + 1,    //we want months to be in [1;12]
-    day_of_week: (m.day() + 7) % 8,  //we want week day to be in [1;7]
+    day_of_month: m.date(),          // we want day to be in [1;31]
+    month_of_year: m.month() + 1,    // we want months to be in [1;12]
+    day_of_week: m.isoWeekday() - 1, // we want week day to be in [0;6]
     utc: m.toISOString()
   });
 }
