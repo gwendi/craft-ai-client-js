@@ -179,7 +179,7 @@ export default function createClient(tokenOrCfg) {
         path: '/agents/' + agentId
       }, this)
       .then(agent => {
-        console.warn('This function is deprecated. It will be removed in the future, use \'deleteAgent\' instead.');
+        console.warn('WARNING: \'destroyAgent\' method of craft ai client is deprecated. It will be removed in the future, use \'deleteAgent\' instead. Refer to https://beta.craft.ai/doc/js.');
         debug(`Agent '${agentId}' deleted`);
         return agent;
       });
@@ -240,13 +240,13 @@ export default function createClient(tokenOrCfg) {
       }, this));
     },
     getAgentInspectorUrl: function(agentId, t = undefined) {
-      console.warn('This function is deprecated. It will be removed in the future, use \'sharedAgentInspectorUrl\' instead.');
+      console.warn('WARNING: \'getAgentInspectorUrl\' method of craft ai client is deprecated. It will be removed in the future, use \'getSharedAgentInspectorUrl\' instead. Refer to https://beta.craft.ai/doc/js.');
       return this.getSharedAgentInspectorUrl(agentId, t);
     },
     getSharedAgentInspectorUrl: function(agentId, t = undefined) {
       return request({
         method: 'GET',
-        path: `/agents/${agentId}/shared` 
+        path: `/agents/${agentId}/shared`
       }, this)
       .then((url) => {
         if (_.isUndefined(t)) {
@@ -261,7 +261,7 @@ export default function createClient(tokenOrCfg) {
     deleteSharedAgentInspectorUrl: function(agentId) {
       return request({
         method: 'DELETE',
-        path: `/agents/${agentId}/shared` 
+        path: `/agents/${agentId}/shared`
       }, this)
       .then(() => {
         debug(`Delete shared inspector link for agent "${agentId}".`);
