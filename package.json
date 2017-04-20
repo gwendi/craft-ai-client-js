@@ -65,7 +65,6 @@
     "moment": "2.18.1",
     "node-fetch": "1.6.3",
     "semver": "5.3.0",
-    "sync-request": "3.0.1",
     "whatwg-fetch": "2.0.3"
   }
 }

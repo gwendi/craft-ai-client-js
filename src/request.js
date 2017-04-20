@@ -7,9 +7,12 @@ import {
   CraftAiUnknownError
 } from './errors';
 import Debug from 'debug';
-import syncRequest from 'sync-request';
 
-let debug = Debug('craft-ai:client');
+const fetch = typeof window === 'undefined' && typeof fetch === 'undefined'
+  ? require('node-fetch')
+  : window.fetch;
+
+const debug = Debug('craft-ai:client');
 
 function parseBody(req, resBody) {
   let resBodyUtf8;
@@ -87,16 +90,11 @@ function parseResponse(req, resStatus, resBody) {
   }
 }
 
-const fetch = typeof window === 'undefined' && typeof fetch === 'undefined'
-  ? require('node-fetch')
-  : window.fetch;
-
 export default function request(req, cfg) {
   req = _.defaults(req || {}, {
     method: 'GET',
     path: '',
     body: undefined,
-    asynchronous: true,
     query: {},
     headers: {}
   });
@@ -111,26 +109,19 @@ export default function request(req, cfg) {
 
   req.body = req.body && JSON.stringify(req.body);
 
-  if (req.asynchronous) {
-    return fetch(req.url, req)
-      .catch(err => Promise.reject(new CraftAiNetworkError({
-        more: err.message
-      })))
-      .then(res => res.text()
-        .catch(err => {
-          debug(`Invalid response from ${req.method} ${req.path}`, err);
-          return Promise.reject(new CraftAiInternalError(
-            'Internal Error, the craft ai server responded an invalid response, see err.more for details.', {
-              request: req,
-              more: err.message
-            }
-          ));
-        })
-        .then(resBody => parseResponse(req, res.status, resBody))
-      );
-  }
-  else {
-    let res = syncRequest(req.method, req.url, req);
-    return parseResponse(req, res.statusCode, res.body);
-  }
+  return fetch(req.url, req)
+    .catch(err => Promise.reject(new CraftAiNetworkError({
+      more: err.message
+    })))
+    .then(res => res.text()
+      .catch(err => {
+        debug(`Invalid response from ${req.method} ${req.path}`, err);
+
+        throw new CraftAiInternalError('Internal Error, the craft ai server responded an invalid response, see err.more for details.', {
+          request: req,
+          more: err.message
+        });
+      })
+      .then(resBody => parseResponse(req, res.status, resBody))
+    );
 }
