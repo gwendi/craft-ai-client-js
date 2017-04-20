@@ -7,7 +7,7 @@ dotenv.load({
 });
 
 module.exports = {
-  entry: '!mocha!./test.js',
+  entry: '!mocha-loader!./test.js',
   output: {
     path: __dirname,
     filename: 'bundle.js'
@@ -22,18 +22,14 @@ module.exports = {
     })
   ],
   module: {
-    loaders: [
+    rules: [
       {
         test: /\.js$/,
-        loaders: ['babel'],
+        loader: 'babel-loader',
         exclude: /node_modules/,
         options: {
           cacheDirectory: true
         }
-      },
-      {
-        test: /\.json$/,
-        loaders: ['json-loader']
       }
     ]
   }
