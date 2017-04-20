@@ -7,7 +7,6 @@ import {
   CraftAiUnknownError
 } from './errors';
 import Debug from 'debug';
-import fetch from 'isomorphic-fetch';
 import syncRequest from 'sync-request';
 
 let debug = Debug('craft-ai:client');
@@ -87,6 +86,10 @@ function parseResponse(req, resStatus, resBody) {
       });
   }
 }
+
+const fetch = typeof window === 'undefined' && typeof fetch === 'undefined'
+  ? require('node-fetch')
+  : window.fetch;
 
 export default function request(req, cfg) {
   req = _.defaults(req || {}, {
