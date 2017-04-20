@@ -26,8 +26,8 @@
   ],
   "scripts": {
     "update_readme": "download http://www.craft.ai/content/api/js.md > README.md && git add README.md && git commit -m 'Updated README file'",
-    "build": "npm run build_node && npm run build_browser:production && npm run build_browser:dev",
-    "build_node": "babel src --out-dir lib",
+    "build": "babel src --out-dir lib",
+    "build_browser": "npm run build_browser:production && npm run build_browser:dev",
     "build_browser:production": "cross-env NODE_ENV=production webpack",
     "build_browser:dev": "cross-env NODE_ENV=development webpack",
     "lint": "eslint .",
@@ -35,8 +35,7 @@
     "test": "npm run test_node && npm run lint",
     "test_node": "mocha",
     "dev_browser": "cd test/browser && webpack-dev-server",
-    "prepublish": "npm run build",
-    "publish_bundle": "./gh-deploy.sh"
+    "prepublishOnly": "npm run build && npm run build_browser"
   },
   "devDependencies": {
     "babel-cli": "6.24.1",
