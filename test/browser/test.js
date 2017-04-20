@@ -9,7 +9,7 @@ require('../test_createClient');
 require('../test_errors');
 require('../test_getAgent');
 require('../test_getAgentDecisionTree');
-require('../test_getAgentInspectorUrl');
+require('../test_getSharedAgentInspectorUrl');
 require('../test_time');
 
 if (window.initMochaPhantomJS) {
