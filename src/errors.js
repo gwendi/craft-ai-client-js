@@ -22,7 +22,7 @@ inherits(CraftAiError, Error);
 
 function createCustomError(name, message) {
   function CraftAiCustomError() {
-    var args = Array.prototype.slice.call(arguments, 0);
+    const args = Array.prototype.slice.call(arguments, 0);
 
     // custom message not set, use default
     if (typeof args[0] !== 'string') {

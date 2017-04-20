@@ -9,7 +9,7 @@ function tzFromOffset(offset) {
   if (_.isInteger(offset)) {
     const sign = offset >= 0 ? '+' : '-';
     const abs = Math.abs(offset);
-    return sign + _.padStart(Math.floor(abs / 60), 2, '0') + ':' + _.padStart(abs % 60, 2, '0');
+    return `${sign}${_.padStart(Math.floor(abs / 60), 2, '0')}:${_.padStart(abs % 60, 2, '0')}`;
   }
   else {
     return offset;

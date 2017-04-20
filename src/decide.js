@@ -56,7 +56,7 @@ function decideRecursion(node, context) {
     (child) => {
       const decision_rule = child.decision_rule;
       const property = decision_rule.property;
-      if ( _.isUndefined(context[property]) ) {
+      if (_.isUndefined(context[property])) {
         // Should not happen
         throw new CraftAiUnknownError({
           message: `Unable to take decision, property '${property}' is missing from the given context.`
@@ -140,7 +140,7 @@ function checkContext(configuration) {
   };
 }
 
-export default function decide( json, ...args ) {
+export default function decide(json, ...args) {
   const { _version, trees, configuration } = parse(json);
   const ctx = configuration ? context(configuration, ...args) : _.extend({}, ...args);
   checkContext(configuration)(ctx);

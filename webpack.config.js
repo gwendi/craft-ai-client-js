@@ -1,10 +1,10 @@
 const path = require('path');
 const webpack = require('webpack');
 
-var configuration = {
-  entry: './src/bundle.js',
+const configuration = {
+  entry: ['./src/bundle.js'],
   output: {
-    path: path.resolve(__dirname + '/dist'),
+    path: path.resolve(__dirname, './dist'),
     filename: 'craft-ai.js'
   },
   plugins: [

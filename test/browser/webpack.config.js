@@ -1,5 +1,5 @@
-var dotenv = require('dotenv');
-var webpack = require('webpack');
+const dotenv = require('dotenv');
+const webpack = require('webpack');
 
 dotenv.load({
   silent: true,

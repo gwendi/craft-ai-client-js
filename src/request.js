@@ -99,11 +99,11 @@ export default function request(req, cfg) {
     headers: {}
   });
 
-  req.url = cfg.url + '/api/v1/' + cfg.owner + '/' + cfg.project + req.path;
+  req.url = `${cfg.url}/api/v1/${cfg.owner}/${cfg.project}${req.path}`;
   if (_.size(req.query) > 0) {
-    req.url = req.url + '?' + _.map(_.keys(req.query), key => `${key}=${req.query[key]}`).join('&');
+    req.url = `${req.url}?${_.map(req.query, (value, key) => `${key}=${value}`).join('&')}`;
   }
-  req.headers['Authorization'] = 'Bearer ' + cfg.token;
+  req.headers['Authorization'] = `Bearer ${cfg.token}`;
   req.headers['Content-Type'] = 'application/json; charset=utf-8';
   req.headers['Accept'] = 'application/json';
 
