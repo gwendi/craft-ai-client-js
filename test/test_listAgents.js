@@ -4,7 +4,7 @@ import CONFIGURATION_1 from './data/configuration_1.json';
 
 describe('client.listAgents()', function() {
   let client;
-  const agentsId = ['list_agents_' + RUN_ID + '_1', 'list_agents_' + RUN_ID + '_2', 'list_agents_' + RUN_ID + '_3'];
+  const agentsId = [`list_agents_${RUN_ID}_1`, `list_agents_${RUN_ID}_2`, `list_agents_${RUN_ID}_3`];
   before(function() {
     client = craftai(CRAFT_CFG);
     expect(client).to.be.ok;

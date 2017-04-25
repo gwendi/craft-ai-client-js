@@ -7,10 +7,12 @@ import {
   CraftAiUnknownError
 } from './errors';
 import Debug from 'debug';
-import fetch from 'isomorphic-fetch';
-import syncRequest from 'sync-request';
 
-let debug = Debug('craft-ai:client');
+const fetch = typeof window === 'undefined' && typeof fetch === 'undefined'
+  ? require('node-fetch')
+  : window.fetch;
+
+const debug = Debug('craft-ai:client');
 
 function parseBody(req, resBody) {
   let resBodyUtf8;
@@ -93,41 +95,33 @@ export default function request(req, cfg) {
     method: 'GET',
     path: '',
     body: undefined,
-    asynchronous: true,
     query: {},
     headers: {}
   });
 
-  req.url = cfg.url + '/api/v1/' + cfg.owner + '/' + cfg.project + req.path;
+  req.url = `${cfg.url}/api/v1/${cfg.owner}/${cfg.project}${req.path}`;
   if (_.size(req.query) > 0) {
-    req.url = req.url + '?' + _.map(_.keys(req.query), key => `${key}=${req.query[key]}`).join('&');
+    req.url = `${req.url}?${_.map(req.query, (value, key) => `${key}=${value}`).join('&')}`;
   }
-  req.headers['Authorization'] = 'Bearer ' + cfg.token;
+  req.headers['Authorization'] = `Bearer ${cfg.token}`;
   req.headers['Content-Type'] = 'application/json; charset=utf-8';
   req.headers['Accept'] = 'application/json';
 
   req.body = req.body && JSON.stringify(req.body);
 
-  if (req.asynchronous) {
-    return fetch(req.url, req)
-      .catch(err => Promise.reject(new CraftAiNetworkError({
-        more: err.message
-      })))
-      .then(res => res.text()
-        .catch(err => {
-          debug(`Invalid response from ${req.method} ${req.path}`, err);
-          return Promise.reject(new CraftAiInternalError(
-            'Internal Error, the craft ai server responded an invalid response, see err.more for details.', {
-              request: req,
-              more: err.message
-            }
-          ));
-        })
-        .then(resBody => parseResponse(req, res.status, resBody))
-      );
-  }
-  else {
-    let res = syncRequest(req.method, req.url, req);
-    return parseResponse(req, res.statusCode, res.body);
-  }
+  return fetch(req.url, req)
+    .catch(err => Promise.reject(new CraftAiNetworkError({
+      more: err.message
+    })))
+    .then(res => res.text()
+      .catch(err => {
+        debug(`Invalid response from ${req.method} ${req.path}`, err);
+
+        throw new CraftAiInternalError('Internal Error, the craft ai server responded an invalid response, see err.more for details.', {
+          request: req,
+          more: err.message
+        });
+      })
+      .then(resBody => parseResponse(req, res.status, resBody))
+    );
 }

@@ -2,7 +2,7 @@ import _ from 'lodash';
 import Time from './time';
 
 export default function createContext(configuration, ...args) {
-  if ( _.isUndefined(configuration) || _.isUndefined(configuration.context) ) {
+  if (_.isUndefined(configuration) || _.isUndefined(configuration.context)) {
     throw new Error('Unable to create context, the given configuration is not valid');
   }
 
@@ -32,10 +32,9 @@ export default function createContext(configuration, ...args) {
           return context[k];
         }
       });
-    }
-    else {
+    } else {
       return _.mapValues(inputContext, (v, k) => {
-        return _.isUndefined( arg[k] ) ? context[k] : arg[k];
+        return _.isUndefined(arg[k]) ? context[k] : arg[k];
       });
     }
   }, _.mapValues(inputContext, () => {

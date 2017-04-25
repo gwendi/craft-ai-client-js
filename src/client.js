@@ -71,7 +71,7 @@ export default function createClient(tokenOrCfg) {
       .reduce((p, chunk) => p.then(
           () => request({
             method: 'POST',
-            path: '/agents/' + agentId + '/context',
+            path: `/agents/${agentId}/context`,
             body: chunk
           }, cfg)
         ),
@@ -141,7 +141,7 @@ export default function createClient(tokenOrCfg) {
       return flushAgentContextOperations(agentId)
       .then(() => request({
         method: 'GET',
-        path: '/agents/' + agentId
+        path: `/agents/${agentId}`
       }, this));
     },
     listAgents: function(agentId) {
@@ -160,7 +160,7 @@ export default function createClient(tokenOrCfg) {
 
       return request({
         method: 'DELETE',
-        path: '/agents/' + agentId
+        path: `/agents/${agentId}`
       }, this)
       .then(agent => {
         debug(`Agent '${agentId}' deleted`);
@@ -176,7 +176,7 @@ export default function createClient(tokenOrCfg) {
 
       return request({
         method: 'DELETE',
-        path: '/agents/' + agentId
+        path: `/agents/${agentId}`
       }, this)
       .then(agent => {
         console.warn('WARNING: \'destroyAgent\' method of craft ai client is deprecated. It will be removed in the future, use \'deleteAgent\' instead. Refer to https://beta.craft.ai/doc/js.');
@@ -196,7 +196,7 @@ export default function createClient(tokenOrCfg) {
       return flushAgentContextOperations(agentId)
       .then(() => request({
         method: 'GET',
-        path: '/agents/' + agentId + '/context/state',
+        path: `/agents/${agentId}/context/state`,
         query: {
           t: posixTimestamp
         }
@@ -236,7 +236,7 @@ export default function createClient(tokenOrCfg) {
       return flushAgentContextOperations(agentId)
       .then(() => request({
         method: 'GET',
-        path: '/agents/' + agentId + '/context'
+        path: `/agents/${agentId}/context`
       }, this));
     },
     getAgentInspectorUrl: function(agentId, t = undefined) {
@@ -280,7 +280,7 @@ export default function createClient(tokenOrCfg) {
       return flushAgentContextOperations(agentId)
       .then(() => request({
         method: 'GET',
-        path: '/agents/' + agentId + '/decision/tree',
+        path: `/agents/${agentId}/decision/tree`,
         query: {
           t: posixTimestamp
         }
@@ -301,7 +301,7 @@ export default function createClient(tokenOrCfg) {
       return flushAgentContextOperations(agentId)
       .then(() => request({
         method: 'GET',
-        path: '/agents/' + agentId + '/decision/tree',
+        path: `/agents/${agentId}/decision/tree`,
         query: {
           t: posixTimestamp
         }

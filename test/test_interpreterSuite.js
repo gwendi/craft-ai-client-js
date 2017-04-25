@@ -20,10 +20,9 @@ describe('decide', () => {
       _.each(expectations, expectation => {
         it(expectation.title, function() {
           if (expectation.error) {
-            expect( () => decide(json, expectation.context, expectation.time ? new Time(expectation.time.t, expectation.time.tz) : {}) ).to.throw( expectation.error.message );
-          }
-          else {
-            expect( decide(json, expectation.context, expectation.time ? new Time(expectation.time.t, expectation.time.tz) : {}) ).to.be.deep.equal( expectation.output );
+            expect(() => decide(json, expectation.context, expectation.time ? new Time(expectation.time.t, expectation.time.tz) : {})).to.throw(expectation.error.message);
+          } else {
+            expect(decide(json, expectation.context, expectation.time ? new Time(expectation.time.t, expectation.time.tz) : {})).to.be.deep.equal(expectation.output);
           }
         });
       });

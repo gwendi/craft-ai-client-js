@@ -4,7 +4,7 @@ import CONFIGURATION_1 from './data/configuration_1.json';
 
 describe('client.sharedAgentInspectorUrl(<agentId>, <timestamp>)', function() {
   let client;
-  const agentId = 'get_public_url_' + RUN_ID;
+  const agentId = `get_public_url_${RUN_ID}`;
 
   before(function() {
     client = craftai(CRAFT_CFG);

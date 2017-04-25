@@ -1,5 +1,6 @@
-var dotenv = require('dotenv');
-var webpack = require('webpack');
+const dotenv = require('dotenv');
+const webpack = require('webpack');
+const config = require('../../webpack.config');
 
 dotenv.load({
   silent: true,
@@ -7,7 +8,11 @@ dotenv.load({
 });
 
 module.exports = {
-  entry: '!mocha!./test.js',
+  entry: [
+    require.resolve('babel-polyfill'),
+    require.resolve('whatwg-fetch'),
+    '!mocha-loader!./test.js'
+  ],
   output: {
     path: __dirname,
     filename: 'bundle.js'
@@ -21,20 +26,5 @@ module.exports = {
       __TRAVIS_BUILD_ID__: JSON.stringify(process.env.TRAVIS_BUILD_ID)
     })
   ],
-  module: {
-    loaders: [
-      {
-        test: /\.js$/,
-        loaders: ['babel'],
-        exclude: /node_modules/,
-        options: {
-          cacheDirectory: true
-        }
-      },
-      {
-        test: /\.json$/,
-        loaders: ['json-loader']
-      }
-    ]
-  }
+  module: config.module
 };

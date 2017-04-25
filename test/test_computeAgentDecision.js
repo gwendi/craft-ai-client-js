@@ -8,7 +8,7 @@ const CONFIGURATION_1_OPERATIONS_1_TO = _.last(CONFIGURATION_1_OPERATIONS_1).tim
 describe('client.computeAgentDecision(<agentId>, <timestamp>, <context>)', function() {
   let client;
   let agent;
-  const agentId = 'compute_agent_decision_' + RUN_ID;
+  const agentId = `compute_agent_decision_${RUN_ID}`;
   before(function() {
     client = craftai(CRAFT_CFG);
     expect(client).to.be.ok;
