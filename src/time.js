@@ -28,6 +28,10 @@ export default function Time(t = undefined, tz = undefined) {
     m = moment.unix(t.timestamp);
     m.utcOffset(t.timezone);
   }
+  else if (t instanceof moment) {
+    // t is an instance of moment
+    m = t;
+  }
   else if (_.isInteger(t)) {
     // t is a posix timestamp
     m = moment.unix(t);
