@@ -202,7 +202,7 @@ describe('Time(...)', function() {
 
     if (moment('2016-06-13 08:59').utcOffset() === 120) {
       // Test depends on locale
-      it('works with a date having a specified timezone', function() {
+      it('works with a date having a given timezone', function() {
         expect(new Time(moment('2016-06-13 08:59'), '+02:00')).to.be.deep.equal({
           utc: '2016-06-13T06:59:00.000Z',
           timestamp: 1465801140,
@@ -214,6 +214,30 @@ describe('Time(...)', function() {
         });
       });
     }
+
+    it('works with a date having a specified timezone', function() {
+      expect(new Time(moment.parseZone('1977-04-22T01:00:00-05:00'))).to.be.deep.equal({
+        utc: '1977-04-22T06:00:00.000Z',
+        timestamp: 230536800,
+        day_of_week: 4,
+        day_of_month: 22,
+        month_of_year: 4,
+        time_of_day: 1,
+        timezone: '-05:00'
+      });
+    });
+
+    it('works with a date having a specified timezone and a given timezone', function() {
+      expect(new Time(moment.parseZone('2017-05-31T08:30:00+08:00'), '-08:00')).to.be.deep.equal({
+        utc: '2017-05-31T00:30:00.000Z',
+        timestamp: 1496190600,
+        day_of_week: 1,
+        day_of_month: 30,
+        month_of_year: 5,
+        time_of_day: 16.5,
+        timezone: '-08:00'
+      });
+    });
   });
 
   describe('from a Time(...)', function() {
