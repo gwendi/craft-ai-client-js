@@ -72,7 +72,7 @@ function decideRecursion(node, context, decisionRule = []) {
     const operandList = _.uniq(_.map(_.values(node.children), child => child.decision_rule.operand));
     const property = _.head(node.children).decision_rule.property;
     throw new CraftAiDecisionError({
-      message: `Unable to take decision: value '${context[property]}' for property '${property}' is not found in the subtree and doesn't lead to any decision.`,
+      message: `Unable to take decision: value '${context[property]}' for property '${property}' doesn't validate any of the decision rules.`,
       metadata: {
         property: property,
         value: context[property],
