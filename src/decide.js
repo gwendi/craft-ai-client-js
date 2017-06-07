@@ -34,7 +34,7 @@ const VALUE_VALIDATOR = {
   month_of_year: value => _.isInteger(value)  && value >= 1 && value <= 12
 };
 
-function decideRecursion(node, context, decisionRule = []) {
+function decideRecursion(node, context) {
   // Leaf
   if (!(node.children && node.children.length)) {
     let leafNode = {
@@ -58,32 +58,46 @@ function decideRecursion(node, context, decisionRule = []) {
       const property = decision_rule.property;
       if (_.isUndefined(context[property])) {
         // Should not happen
-        throw new CraftAiUnknownError({
-          message: `Unable to take decision, property '${property}' is missing from the given context.`
-        });
+        return {
+          predicted_value: undefined,
+          confidence: undefined,
+          error: {
+            errorName: 'CraftAiUnknownError',
+            message: `Unable to take decision, property '${property}' is missing from the given context.`
+          }
+        };
       }
 
       return OPERATORS[decision_rule.operator](context[property], decision_rule.operand);
     }
   );
 
+  // matching child property error
+  if (matchingChild && matchingChild.error) {
+    return matchingChild;
+  }
+
   if (_.isUndefined(matchingChild)) {
     // Should only happens when an unexpected value for an enum is encountered
     const operandList = _.uniq(_.map(_.values(node.children), child => child.decision_rule.operand));
     const property = _.head(node.children).decision_rule.property;
-    throw new CraftAiDecisionError({
-      message: `Unable to take decision: value '${context[property]}' for property '${property}' doesn't validate any of the decision rules.`,
-      metadata: {
-        property: property,
-        value: context[property],
-        expected_values: operandList,
-        decision_rules: decisionRule
+    return {
+      predicted_value: undefined,
+      confidence: undefined,
+      error: {
+        name: 'CraftAiDecisionError',
+        message: `Unable to take decision: value '${context[property]}' for property '${property}' doesn't validate any of the decision rules.`,
+        metadata: {
+          property: property,
+          value: context[property],
+          expected_values: operandList
+        }
       }
-    });
+    };
   }
 
   // matching child found: recurse !
-  const result = decideRecursion(matchingChild, context, decisionRule.concat(matchingChild.decision_rule));
+  const result = decideRecursion(matchingChild, context);
 
   let finalResult = {
     predicted_value: result.predicted_value,
@@ -93,6 +107,10 @@ function decideRecursion(node, context, decisionRule = []) {
 
   if (result.standard_deviation) {
     finalResult.standard_deviation = result.standard_deviation;
+  }
+
+  if (result.error) {
+    finalResult.error = result.error;
   }
 
   return finalResult;
@@ -148,8 +166,25 @@ export default function decide(json, ...args) {
   return {
     _version: _version,
     context: ctx,
-    output: _.assign(..._.map(configuration.output, (output) => ({
-      [output]: decideRecursion(trees[output], ctx)
-    })))
+    output: _.assign(..._.map(configuration.output, (output) => {
+      let decision = decideRecursion(trees[output], ctx);
+      if (decision.error) {
+        switch (decision.error.name) {
+          case 'CraftAiDecisionError':
+            throw new CraftAiDecisionError({
+              message: decision.error.message,
+              metadata: decision.error.metadata
+            });
+          default:
+            throw new CraftAiUnknownError({
+              message: decision.error.message
+            });
+        }
+
+      }
+      return {
+        [output]: decision
+      };
+    }))
   };
 }
