@@ -99,19 +99,9 @@ function decideRecursion(node, context) {
   // matching child found: recurse !
   const result = decideRecursion(matchingChild, context);
 
-  let finalResult = {
-    predicted_value: result.predicted_value,
-    confidence: result.confidence,
+  let finalResult = _.extend(result, {
     decision_rules: [matchingChild.decision_rule].concat(result.decision_rules)
-  };
-
-  if (result.standard_deviation) {
-    finalResult.standard_deviation = result.standard_deviation;
-  }
-
-  if (result.error) {
-    finalResult.error = result.error;
-  }
+  });
 
   return finalResult;
 }
@@ -173,7 +163,9 @@ export default function decide(json, ...args) {
           case 'CraftAiDecisionError':
             throw new CraftAiDecisionError({
               message: decision.error.message,
-              metadata: decision.error.metadata
+              metadata: _.extend(decision.error.metadata, {
+                decision_rules: decision.decision_rules
+              })
             });
           default:
             throw new CraftAiUnknownError({
