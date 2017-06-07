@@ -452,19 +452,25 @@ provided continuously.
 
 The `craftai.Time` class facilitates the handling of time types in **craft ai**. It is able to extract the different **craft ai** formats from various _datetime_ representations, thanks to [Moment.js](http://momentjs.com).
 
+From a unix timestamp and an explicit UTC offset:
+
 ```js
-// From a unix timestamp and an explicit UTC offset
 const t1 = new craftai.Time(1465496929, '+10:00');
 
 // t1 === {
 //   utc: '2016-06-09T18:28:49.000Z',
 //   timestamp: 1465496929,
 //   day_of_week: 4,
+//   day_of_month: 10,
+//   month_of_year: 6,
 //   time_of_day: 4.480277777777778,
 //   timezone: '+10:00'
 // }
+```
 
-// From a unix timestamp and using the local UTC offset.
+From a unix timestamp and using the local UTC offset:
+
+```js
 const t2 = new craftai.Time(1465496929);
 
 // Value are valid if in Paris !
@@ -472,11 +478,16 @@ const t2 = new craftai.Time(1465496929);
 //   utc: '2016-06-09T18:28:49.000Z',
 //   timestamp: 1465496929,
 //   day_of_week: 3,
+//   day_of_month: 9,
+//   month_of_year: 6,
 //   time_of_day: 20.480277777777776,
 //   timezone: '+02:00'
 // }
+```
 
-// From a ISO 8601 string
+From a [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) string:
+
+```js
 const t3 = new craftai.Time('1977-04-22T01:00:00-05:00');
 
 // t3 === {
@@ -484,13 +495,37 @@ const t3 = new craftai.Time('1977-04-22T01:00:00-05:00');
 //   timestamp: 230536800,
 //   day_of_week: 4,
 //   time_of_day: 1,
+//   day_of_month: 22,
+//   month_of_year: 4,
 //   timezone: '-05:00'
 // }
+```
 
-// Retrieve the current time with the local UTC offset
+From a [moment](http://momentjs.com) (or [moment timezone](http://momentjs.com/timezone/)) instance:
+
+```js
+const t4 = new craftai.Time(moment.tz('2017-05-31 12:45:00', 'Asia/Dubai'), '-08:00'));
+
+// t4 === {
+//   utc: '2017-05-31T08:45:00.000Z',
+//   timestamp: 1496220300,
+//   day_of_week: 2,
+//   day_of_month: 31,
+//   month_of_year: 5,
+//   time_of_day: 0.75,
+//   timezone: '-08:00'
+// }
+```
+
+Retrieve the current time with the local UTC offset:
+
+```js
 const now = new craftai.Time();
+```
 
-// Retrieve the current time with the given UTC offset
+Retrieve the current time with a given UTC offset:
+
+```js
 const nowP5 = new craftai.Time(undefined, '+05:00');
 ```
 
