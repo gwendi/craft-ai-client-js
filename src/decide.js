@@ -34,7 +34,7 @@ const VALUE_VALIDATOR = {
   month_of_year: value => _.isInteger(value)  && value >= 1 && value <= 12
 };
 
-function decideRecursion(node, context) {
+function decideRecursion(node, context, decisionRule = []) {
   // Leaf
   if (!(node.children && node.children.length)) {
     let leafNode = {
@@ -72,17 +72,18 @@ function decideRecursion(node, context) {
     const operandList = _.uniq(_.map(_.values(node.children), child => child.decision_rule.operand));
     const property = _.head(node.children).decision_rule.property;
     throw new CraftAiDecisionError({
-      message: `Unable to take decision: '${context[property]}' not found amongst values for the '${property}' property.`,
+      message: `Unable to take decision: value '${context[property]}' for property '${property}' is not found in the subtree and doesn't lead to any decision.`,
       metadata: {
         property: property,
         value: context[property],
-        expectedValues: operandList
+        expected_values: operandList,
+        decision_rules: decisionRule
       }
     });
   }
 
   // matching child found: recurse !
-  const result = decideRecursion(matchingChild, context);
+  const result = decideRecursion(matchingChild, context, decisionRule.concat(matchingChild.decision_rule));
 
   let finalResult = {
     predicted_value: result.predicted_value,
