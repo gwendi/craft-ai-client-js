@@ -1,7 +1,7 @@
 import _ from 'lodash';
 import parse from './parse';
 import context from './context';
-import { CraftAiDecisionError, CraftAiUnknownError } from './errors';
+import { CraftAiDecisionError, CraftAiNullDecisionError, CraftAiUnknownError } from './errors';
 
 const OPERATORS = {
   'is'    : (context, value) => context === value,
@@ -37,6 +37,17 @@ const VALUE_VALIDATOR = {
 function decideRecursion(node, context) {
   // Leaf
   if (!(node.children && node.children.length)) {
+    if (node.predicted_value == null) {
+      return {
+        predicted_value: undefined,
+        confidence: undefined,
+        error: {
+          name: 'CraftAiNullDecisionError',
+          message: 'Unable to take decision: decision rules lead to a leaf with a null output value. The tree couldn\'t infer a valid output value.'
+        }
+      };
+    }
+
     let leafNode = {
       predicted_value: node.predicted_value,
       confidence: node.confidence || 0,
@@ -62,7 +73,7 @@ function decideRecursion(node, context) {
           predicted_value: undefined,
           confidence: undefined,
           error: {
-            errorName: 'CraftAiUnknownError',
+            name: 'CraftAiUnknownError',
             message: `Unable to take decision, property '${property}' is missing from the given context.`
           }
         };
@@ -85,7 +96,7 @@ function decideRecursion(node, context) {
       predicted_value: undefined,
       confidence: undefined,
       error: {
-        name: 'CraftAiDecisionError',
+        name: 'CraftAiNullDecisionError',
         message: `Unable to take decision: value '${context[property]}' for property '${property}' doesn't validate any of the decision rules.`,
         metadata: {
           property: property,
@@ -166,8 +177,8 @@ export default function decide(json, ...args) {
       let decision = decideRecursion(trees[output], ctx);
       if (decision.error) {
         switch (decision.error.name) {
-          case 'CraftAiDecisionError':
-            throw new CraftAiDecisionError({
+          case 'CraftAiNullDecisionError':
+            throw new CraftAiNullDecisionError({
               message: decision.error.message,
               metadata: _.extend(decision.error.metadata, {
                 decision_rules: decision.decision_rules
