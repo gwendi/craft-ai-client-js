@@ -43,7 +43,7 @@ function decideRecursion(node, context) {
         confidence: undefined,
         error: {
           name: 'CraftAiNullDecisionError',
-          message: 'Unable to take decision: decision rules lead to a leaf with a null output value. The tree couldn\'t infer a valid output value.'
+          message: 'Unable to take decision: the decision tree has no valid predicted value for the given context.'
         }
       };
     }
@@ -74,7 +74,7 @@ function decideRecursion(node, context) {
           confidence: undefined,
           error: {
             name: 'CraftAiUnknownError',
-            message: `Unable to take decision, property '${property}' is missing from the given context.`
+            message: `Unable to take decision: property '${property}' is missing from the given context.`
           }
         };
       }
