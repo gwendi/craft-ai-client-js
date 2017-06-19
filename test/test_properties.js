@@ -348,7 +348,7 @@ describe('Properties', () => {
       ];
       const output = reduceDecisionRule(decisionRules);
       expect(output.operator).to.be.equal('<');
-      expect(output.operand).to.be.equal(6);
+      expect(output.operand).to.be.equal(2);
     });
 
     it('Reduce "<" properties, with itself', () => {
@@ -409,7 +409,7 @@ describe('Properties', () => {
       ];
       const output = reduceDecisionRule(decisionRules);
       expect(output.operator).to.be.equal('>=');
-      expect(output.operand).to.be.equal(2);
+      expect(output.operand).to.be.equal(4);
     });
 
 

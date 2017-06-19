@@ -302,7 +302,7 @@ const REDUCER_FROM_DECISION_RULE = {
     [OPERATORS.IN]: (decisionRule1, decisionRule2) => REDUCER_FROM_DECISION_RULE[OPERATORS.IN][OPERATORS.GTE](decisionRule2, decisionRule1),
     [OPERATORS.GTE]: (decisionRule1, decisionRule2) => ({
       operator: OPERATORS.GTE,
-      operand: Math.min(decisionRule1.operand, decisionRule2.operand)
+      operand: Math.max(decisionRule1.operand, decisionRule2.operand)
     }),
     [OPERATORS.LT]: (decisionRule1, decisionRule2) => {
       const newLowerBound = decisionRule1.operand;
@@ -321,7 +321,7 @@ const REDUCER_FROM_DECISION_RULE = {
     [OPERATORS.GTE]: (decisionRule1, decisionRule2) => REDUCER_FROM_DECISION_RULE[OPERATORS.GTE][OPERATORS.LT](decisionRule2, decisionRule1),
     [OPERATORS.LT]: (decisionRule1, decisionRule2) => ({
       operator: OPERATORS.LT,
-      operand: Math.max(decisionRule1.operand, decisionRule2.operand)
+      operand: Math.min(decisionRule1.operand, decisionRule2.operand)
     })
   }
 };
