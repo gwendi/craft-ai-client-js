@@ -10,6 +10,7 @@ require('../test_errors');
 require('../test_getAgent');
 require('../test_getAgentDecisionTree');
 require('../test_getSharedAgentInspectorUrl');
+require('../test_properties');
 require('../test_time');
 
 if (window.initMochaPhantomJS) {
