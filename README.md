@@ -822,7 +822,7 @@ client.getAgentDecisionTree(
   console.log(tree);
   /* Outputed tree is the following
   {
-    "_version": "1.0.0",
+    "_version": "1.1.0",
     "configuration": {
       "context": {
         "peopleCount": {

@@ -3,6 +3,8 @@ import parse from './parse';
 import context from './context';
 import { CraftAiDecisionError, CraftAiNullDecisionError, CraftAiUnknownError } from './errors';
 
+const DECISION_FORMAT_VERSION = '1.1.0';
+
 const OPERATORS = {
   'is'    : (context, value) => context === value,
   '>='    : (context, value) => context * 1 >= value,
@@ -171,7 +173,7 @@ export default function decide(json, ...args) {
   const ctx = configuration ? context(configuration, ...args) : _.extend({}, ...args);
   checkContext(configuration)(ctx);
   return {
-    _version: _version,
+    _version: DECISION_FORMAT_VERSION,
     context: ctx,
     output: _.assign(..._.map(configuration.output, (output) => {
       let decision = decideRecursion(trees[output], ctx);
