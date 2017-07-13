@@ -328,8 +328,8 @@ Each agent has a configuration defining:
 
 > :warning: In the current version, only one output property can be provided.
 
-- the `time_quantum` is the minimum amount of time, in seconds, that is meaningful for an agent; context updates occurring faster than this quantum won't be taken into account. As a rule of thumb, you should always choose the largest value that seems right and reduce it, if necessary, after some tests.
-- the `learning_period` is the maximum amount of time, in seconds, that matters for an agent; the agent's decision model can ignore context that is older than this duration. You should generally choose the smallest value that fits this description.
+- the `time_quantum`, i.e. the minimum amount of time, in seconds, that is meaningful for an agent; context updates occurring faster than this quantum won't be taken into account. As a rule of thumb, you should always choose the largest value that seems right and reduce it, if necessary, after some tests.
+- the `learning_period`, i.e. the maximum amount of time, in seconds, that matters for an agent; the agent's decision model can ignore context that is older than this duration. You should generally choose the smallest value that fits this description.
 
 > :warning: if no time_quantum is specified, the default value is 600.
 
@@ -341,8 +341,8 @@ Each agent has a configuration defining:
 
 `enum` and `continuous` are the two base **craft ai** types:
 
-- `enum` properties can take any string value;
-- `continuous` properties can take any real number value.
+- an `enum` property is a string;
+- a `continuous` property is a real number.
 
 > :warning: the absolute value of a `continuous` property must be less than 10<sup>20</sup>.
 
@@ -350,15 +350,14 @@ Each agent has a configuration defining:
 
 **craft ai** defines the following types related to time:
 
-- `time_of_day` properties can take any real number belonging to **[0.0; 24.0[**
-representing the number of hours in the day since midnight (e.g. 13.5 means
+- a `time_of_day` property is a real number belonging to **[0.0; 24.0[**, each value represents the number of hours in the day since midnight (e.g. 13.5 means
 13:30),
-- `day_of_week` properties can take any integer belonging to **[0, 6]**, each
+- a `day_of_week` property is an integer belonging to **[0, 6]**, each
 value represents a day of the week starting from Monday (0 is Monday, 6 is
 Sunday).
-- `day_of_month` properties can take any integer belonging to **[1, 31]**, each value represents a day of the month.
-- `month_of_year` properties can take any integer belonging to **[1, 12]**, each value represents a month of the year.
-- `timezone` properties can take string values representing the timezone as an
+- a `day_of_month` property is an integer belonging to **[1, 31]**, each value represents a day of the month.
+- a `month_of_year` property is an integer belonging to **[1, 12]**, each value represents a month of the year.
+- a `timezone` property is a string value representing the timezone as an
 offset from UTC, the expected format is **±[hh]:[mm]** where `hh` represent the
 hour and `mm` the minutes from UTC (eg. `+01:30`)), between `-12:00` and
 `+14:00`.
@@ -528,6 +527,16 @@ Retrieve the current time with a given UTC offset:
 ```js
 const nowP5 = new craftai.Time(undefined, '+05:00');
 ```
+
+### Advanced configuration ###
+
+The following **advanced** configuration parameters can be set in specific cases. They are **optional**. Usually you would not need them.
+
+- `operations_as_events` is a boolean, either `true` or `false`. The default value is `false`. If it is set to true, all context operations are treated as events, as opposed to context updates. This is appropriate if the data for an agent is made of events that have no duration, and if many events are more significant than a few. If `operations_as_events` is `true`, `learning_period` and the advanced parameter `tree_max_operations` must be set as well. In that case, `time_quantum` is ignored because events have no duration, as opposed to the evolution of an agent's context over time.
+- `tree_max_operations` is a positive integer. It **can and must** be set only if `operations_as_events` is `true`. It defines the maximum number of events on which a single decision tree can be based. It is complementary to `learning_period`, which limits the maximum age of events on which a decision tree is based.
+- `tree_max_depth` is a positive integer. It defines the maximum depth of decision trees, which is the maximum distance between the root node and a leaf (terminal) node. A depth of 0 means that the tree is made of a single root node. By default, `tree_max_depth` is set to 6 if the output is categorical (e.g. `enum`), or to 4 if the output is numerical (e.g. `continuous`).
+
+These advanced configuration parameters are optional, and will appear in the agent information returned by **craft ai** only if you set them to something other than their default value. If you intend to use them in a production environment, please get in touch with us.
 
 ### Agent ###
 
@@ -822,7 +831,7 @@ client.getAgentDecisionTree(
   console.log(tree);
   /* Outputed tree is the following
   {
-    "_version": "1.1.0",
+    "_version": "1.0.0",
     "configuration": {
       "context": {
         "peopleCount": {
