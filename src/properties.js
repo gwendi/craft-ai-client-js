@@ -49,12 +49,13 @@ const PROPERTY_FORMATTER = {
   [TYPE_ANY]: value => value,
   [TYPES.continuous]: number => `${Math.round(number * 100) / 100}`,
   [TYPES.time_of_day]: time => {
-    if (time instanceof moment) {
-      if (time.seconds() < 1) {
-        return time.format('HH:mm');
+    if (_.isDate(time)) {
+      const momentTime = moment(time);
+      if (momentTime.seconds() < 1) {
+        return momentTime.format('HH:mm');
       }
       else {
-        return time.format('HH:mm:ss');
+        return momentTime.format('HH:mm:ss');
       }
     }
     else {
@@ -75,16 +76,16 @@ const PROPERTY_FORMATTER = {
     }
   },
   [TYPES.day_of_week]: day => {
-    if (day instanceof moment) {
-      return DAYS[day.isoWeekday() - 1];
+    if (_.isDate(day)) {
+      return DAYS[moment(day).isoWeekday() - 1];
     }
     else {
       return DAYS[day];
     }
   },
   [TYPES.day_of_month]: day => {
-    if (day instanceof moment) {
-      return day.date();
+    if (_.isDate(day)) {
+      return moment(day).date();
     }
     else {
       return day;
@@ -92,8 +93,8 @@ const PROPERTY_FORMATTER = {
   },
   // Months are in [1; 12] thus -1 to be index month name in [0; 11]
   [TYPES.month_of_year]: month => {
-    if (month instanceof moment) {
-      return MONTH[month.month()];
+    if (_.isDate(month)) {
+      return MONTH[moment(month).month()];
     }
     else {
       return MONTH[month - 1];

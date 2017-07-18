@@ -10,8 +10,8 @@ describe('Properties', () => {
         expect(formatter(11.008)).to.be.equal('11:00:28');
       });
       it('Works properly on moment', () => {
-        expect(formatter(moment('2016-10-20T08:20:03'))).to.be.equal('08:20:03');
-        expect(formatter(moment('2016-08-12T13:37'))).to.be.equal('13:37');
+        expect(formatter(moment('2016-10-20T08:20:03').toDate())).to.be.equal('08:20:03');
+        expect(formatter(moment('2016-08-12T13:37').toDate())).to.be.equal('13:37');
       });
     });
     describe(TYPES.enum, () => {
